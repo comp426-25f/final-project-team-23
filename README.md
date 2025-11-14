@@ -1,7 +1,7 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/AwXt-p7h)
 # << APP NAME >>
 
-> Developed by [YOUR NAMES]() for COMP 426: Modern Web Programming at UNC-Chapel Hill.
+> Developed by Molly Bunta, Kate Murray, Pranav Reddy, and Rebecca Henriques for COMP 426: Modern Web Programming at UNC-Chapel Hill.
 
 
 ![TypeScript](https://img.shields.io/badge/-TypeScript-05122A?style=flat&logo=typescript)
