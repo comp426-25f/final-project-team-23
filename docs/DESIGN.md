@@ -67,4 +67,4 @@ DB Schema to support AI Trip Planning, Collaborative Itinerary Editing, Followin
 
 ## High-Fidelity Prototype
 
-*Replace this with an embedded Figma project here.*
+<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="800" height="450" src="https://embed.figma.com/design/21E71nKUrbkmpKE5nZEFQe/Final-Project-Prototype--Very-Rough-?node-id=4704-1365&embed-host=share" allowfullscreen></iframe>
