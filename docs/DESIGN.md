@@ -28,33 +28,33 @@
 
 ### Feature 3: Following Feed + Explore Travel Feed
 
-**Description:**
+**Description:** The "Following Feed" displays an infinite list of trips, posts, journals, and photo galleries posted by the users that the current user elects to follow. The "Explore Travel Feed" showcases trending trips from the wider community, while also populating this feed with algorithmically sorted content specific to the current users interests to provide travel inspiration. 
 
-**User(s):**
+**User(s):** This feature is for users who use the app for its social and discovery aspects. It is designed to peak curiosity in individuals seeking inspiration for their next trip or vacation, where their friends are headed, or connection with other users that align with their travel interests.   
 
-**Purpose:**
+**Purpose:** This feature is vital for user engagement and retention by transforming the app from a simple planner into a sparkling travel community. By populating a continuous stream of inspiration, users are able to discover new places based on experiences of others, fostering connections rooted in shared curiosities.  
 
-**Technical Notes:**
+**Technical Notes:** This feature will be implemented using the database, especially the key tables like posts, trips, users, and images. In addition to these tables, it will also rely on the join table, user_followings, which combines the tables: following and likes. The Explore Travel Feed algorithm will sort what content is displayed by querying posts with high engagement (ie number of likes) and that have been recently shared. The infinite scrolling will be implemented by paginating these results from the backend. Postgres will dynamically update changes like the like count or comment count on a post instantaneously in the UI while users interact with the feed.
 
 ### Feature 4: Post Travel Journals + Photos for Each Trip
 
-**Description:**
+**Description:** Upon the conclusion of a trip, users can convert their itinerary into a shareable journal post. These journal posts are displayed on the user's public profile and are included in the Following and Explore Travel Feeds. This feature aims to enrich trip posts by uploading a photo gallery subjective to said trip, while allowing users to add comments about their experiences. 
 
-**User(s):**
+**User(s):** This feature relates to users that want to memorialize their travels in photos and comments. Users are able to share their experiences and recommendations with their friends and wider community, creating a personal memento of their adventures. 
 
-**Purpose:**
+**Purpose:** This feature aims to transform cherished memories into a digital landscape where they live on forever. This feature increases engagement by encouraging users to return to the app and allow it to generate high quality content based on what the user feeds it. This content fuels the social feeds, connecting similar users to each other through their trip recaps. 
 
-**Technical Notes:**
+**Technical Notes:** This feature will be implemented using the database and Supabase storage buckets. Specifically, the database will hold the table, journals, which references a trip id, user id, and fields for post trip comments. This table will have a one-to-many relationship with the table that references the gallery of images subjective to each trip. The high resolution images will be stored in buckets with the gallery images table storing secure URLs that link each photo to the respective journal post. 
 
 ### Feature 5: Travel Buddy Chats
 
-**Description:**
+**Description:** This feature permits two types of chatting functionalities: private group channels and public destination channels. The private group channels permit user collaboration on shared trip itineraries in a dedicated space. The public channels are based on certain destinations that any user is able to join to gather data on specific locations other users have traveled to.  
 
-**User(s):**
+**User(s):** This feature aims to serve a wide range of users by streamlining collaboration. This feature covers communication for group trips, solo travelers seeking tips on specific locations, and connecting companions with shared interests. 
 
-**Purpose:**
+**Purpose:** This feature facilitates concise communication and community building, prioritizing collaboration within the traveling world. Due to this streamlined communication, users can rely solely on this app for trip coordination, providing platforms for gathering knowledge from experienced travelers which enhances the overall experience.  
 
-**Technical Notes:**
+**Technical Notes:** This feature will rely on Realtime, specifically Broadcast and Presence. The database will hold the table, chats, that define the structure of the chatroom/channel (ie private or public), and the table, messages, that stores sent messages. Broadcast channels will send messages from a user to all other users subscribed to that specific chat room instantly, which keeps the interactions quick and concise. Presence will track users online or offline status within specific chat rooms, updating the UI to reflect the active profiles within that subjective channel.  
 
 *Feel free to add more here if needed.*
 
