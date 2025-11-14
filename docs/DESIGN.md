@@ -63,8 +63,7 @@
 <img width="1304" height="705" alt="Screenshot 2025-11-11 at 10 33 55 PM" src="https://github.com/user-attachments/assets/4db6599d-84ad-4674-82b7-c1c40e88841f" />
 
 DB Schema to support AI Trip Planning, Collaborative Itinerary Editing, Following Feed + Explore Travel Feed, Posting Travel Journals + Photo Galleries, and Travel Buddy Chats.
-*Please add a short description for important design considerations.
 
 ## High-Fidelity Prototype
 
-<iframe style="border: 1px solid rgba(0, 0, 0, 0.1);" width="800" height="450" src="https://embed.figma.com/design/21E71nKUrbkmpKE5nZEFQe/Final-Project-Prototype--Very-Rough-?node-id=4704-1365&embed-host=share" allowfullscreen></iframe>
+<iframe width="800" height="450" src="https://embed.figma.com/design/21E71nKUrbkmpKE5nZEFQe/Final-Project-Prototype--Very-Rough-?node-id=4704-1365&embed-host=share" allowfullscreen></iframe>
