@@ -20,12 +20,12 @@ import {
   text,
   timestamp,
   uuid,
-  date
+  date,
 } from "drizzle-orm/pg-core";
 import { relations, sql } from "drizzle-orm";
 
 export const profilesTable = pgTable("profiles", {
-  id: text("id").primaryKey(),
+  id: uuid("id").primaryKey(),
   displayName: text("display_name").notNull(),
   username: text("username").notNull(),
   avatarUrl: text("avatar_url"),
@@ -44,7 +44,7 @@ export const serverMembershipsTable = pgTable(
     serverId: uuid("server_id")
       .notNull()
       .references(() => serversTable.id),
-    profileId: text("profile_id")
+    profileId: uuid("profile_id")
       .notNull()
       .references(() => profilesTable.id),
   },
@@ -58,7 +58,7 @@ export const messagesTable = pgTable(
   {
     id: uuid("id").defaultRandom().primaryKey(),
     content: text("content"),
-    authorId: text("author_id").references(() => profilesTable.id),
+    authorId: uuid("author_id").references(() => profilesTable.id),
     serverId: uuid("server_id").references(() => serversTable.id),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     attachmentUrl: text("attachment_url"),
@@ -75,7 +75,7 @@ export const reactionsTable = pgTable("reactions", {
   id: uuid("id").defaultRandom().primaryKey(),
   reaction: text("reaction").notNull(),
   messageId: uuid("message_id").references(() => messagesTable.id),
-  profileId: text("profile_id").references(() => profilesTable.id),
+  profileId: uuid("profile_id").references(() => profilesTable.id),
   serverId: uuid("server_id").references(() => serversTable.id),
 });
 
@@ -89,7 +89,7 @@ export const profilesRelations = relations(profilesTable, ({ many }) => ({
   following: many(profilesTable, { relationName: "following" }),
   followers: many(profilesTable, { relationName: "followers" }),
   itineraryCollaborator: many(itineraryCollaboratorsTable),
-  itinerary: many(itineraryTable), 
+  itinerary: many(itineraryTable),
 }));
 
 export const serversRelations = relations(serversTable, ({ one, many }) => ({
@@ -144,7 +144,7 @@ export const reactionsRelations = relations(reactionsTable, ({ one }) => ({
 }));
 
 export const postsTable = pgTable("posts", {
-  id: serial("id").primaryKey(),
+  id: uuid("id").primaryKey(),
   content: text("content"),
   postedAt: timestamp("posted_at").defaultNow(),
   authorId: uuid("author_id").references(() => profilesTable.id, {
@@ -157,10 +157,10 @@ export const postsTable = pgTable("posts", {
 export const likesTable = pgTable(
   "likes",
   {
-    postId: integer("post_id")
+    postId: uuid("post_id")
       .notNull()
       .references(() => postsTable.id, { onDelete: "cascade" }),
-    profileId: text("profile_id")
+    profileId: uuid("profile_id")
       .notNull()
       .references(() => profilesTable.id, { onDelete: "cascade" }),
   },
@@ -172,10 +172,10 @@ export const likesTable = pgTable(
 export const followsTable = pgTable(
   "follows",
   {
-    followerId: text("follower_id")
+    followerId: uuid("follower_id")
       .notNull()
       .references(() => profilesTable.id, { onDelete: "cascade" }),
-    followingId: text("following_id")
+    followingId: uuid("following_id")
       .notNull()
       .references(() => profilesTable.id, { onDelete: "cascade" }),
   },
@@ -221,7 +221,7 @@ export const followsRelations = relations(followsTable, ({ one }) => ({
 }));
 
 export const itineraryCollaboratorsTable = pgTable(
-  "itinerary_collaborators", 
+  "itinerary_collaborators",
   {
     itineraryId: uuid("itinerary_id")
       .notNull()
@@ -229,7 +229,7 @@ export const itineraryCollaboratorsTable = pgTable(
     profileId: uuid("profile_id")
       .notNull()
       .references(() => profilesTable.id),
-  }, 
+  },
   (t) => ({
     pk: primaryKey({ columns: [t.itineraryId, t.profileId] }),
   }),
@@ -250,68 +250,81 @@ export const itineraryCollaboratorsRelations = relations(
 );
 
 export const destinationsTable = pgTable("destinations", {
-    id: uuid("id").defaultRandom().primaryKey(), 
-    name: text("name").notNull(),
-    country: text("country").notNull(),
-    continent: text("continent").notNull(),
+  id: uuid("id").defaultRandom().primaryKey(),
+  name: text("name").notNull(),
+  country: text("country").notNull(),
+  continent: text("continent").notNull(),
 });
 
 export const itineraryTable = pgTable("itineraries", {
   id: uuid("id").defaultRandom().primaryKey(),
   content: text("content"),
   destinationId: uuid("destination_id").references(() => destinationsTable.id),
-  title: text("title").notNull(), 
-  description: text("description"), 
-  startDate: date("start_date").notNull(), 
+  title: text("title").notNull(),
+  description: text("description"),
+  startDate: date("start_date").notNull(),
   endDate: date("end_date").notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(), 
-  authorId: text("author_id").references(() => profilesTable.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  authorId: uuid("author_id").references(() => profilesTable.id),
 });
 
 export const itineraryDaysTable = pgTable("itinerary_days", {
   id: uuid("id").defaultRandom().primaryKey(),
-  itineraryId: uuid("itinerary_id").notNull().references(() => itineraryTable.id),
+  itineraryId: uuid("itinerary_id")
+    .notNull()
+    .references(() => itineraryTable.id),
   dayNumber: integer("day_number").notNull(),
-  notes: text("notes")
+  notes: text("notes"),
 });
 
 export const activitiesTable = pgTable("activities", {
   id: uuid("id").defaultRandom().primaryKey(),
-  itineraryDayId: uuid("itinerary_day_id").notNull().references(() => itineraryDaysTable.id),
-  time: timestamp("time").notNull(), 
-  name: text("name").notNull(), 
+  itineraryDayId: uuid("itinerary_day_id")
+    .notNull()
+    .references(() => itineraryDaysTable.id),
+  time: timestamp("time").notNull(),
+  name: text("name").notNull(),
   category: text("category"),
-  description: text("description").notNull(), 
+  description: text("description").notNull(),
   location: text("location"),
 });
 
-export const destinationsRelations = relations(destinationsTable, ({many}) => ({
-  posts: many(postsTable),
-  itineraries: many(itineraryTable),
-}));
-
-export const itineraryRelations = relations(itineraryTable, ({one, many}) => ({
-  author: one(profilesTable, {
-    fields: [itineraryTable.authorId],
-    references: [profilesTable.id],
+export const destinationsRelations = relations(
+  destinationsTable,
+  ({ many }) => ({
+    posts: many(postsTable),
+    itineraries: many(itineraryTable),
   }),
-  destination: one(destinationsTable, {
-    fields: [itineraryTable.destinationId],
-    references: [destinationsTable.id],
-  }),
-  collaborators: many(itineraryCollaboratorsTable),
-  days: many(itineraryDaysTable),
-}));
+);
 
-export const itineraryDaysRelations = relations(itineraryDaysTable, ({one, many}) => ({
-  itinerary: one(itineraryTable, {
-    fields: [itineraryDaysTable.itineraryId],
-    references: [itineraryTable.id],
+export const itineraryRelations = relations(
+  itineraryTable,
+  ({ one, many }) => ({
+    author: one(profilesTable, {
+      fields: [itineraryTable.authorId],
+      references: [profilesTable.id],
+    }),
+    destination: one(destinationsTable, {
+      fields: [itineraryTable.destinationId],
+      references: [destinationsTable.id],
+    }),
+    collaborators: many(itineraryCollaboratorsTable),
+    days: many(itineraryDaysTable),
   }),
-  activities: many(activitiesTable),
-}));
+);
 
-export const activitiesRelations = relations(activitiesTable, ({one}) => ({
+export const itineraryDaysRelations = relations(
+  itineraryDaysTable,
+  ({ one, many }) => ({
+    itinerary: one(itineraryTable, {
+      fields: [itineraryDaysTable.itineraryId],
+      references: [itineraryTable.id],
+    }),
+    activities: many(activitiesTable),
+  }),
+);
+
+export const activitiesRelations = relations(activitiesTable, ({ one }) => ({
   itineraryDay: one(itineraryDaysTable, {
     fields: [activitiesTable.itineraryDayId],
     references: [itineraryDaysTable.id],
