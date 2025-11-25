@@ -6,8 +6,7 @@ import { api } from "@/utils/trpc/api";
 import PostCard from "@/components/post";
 import { Subject } from "@/server/models/auth";
 import { useAuth } from "@/utils/use-auth";
-import CreatePostDialog from "@/components/create_post";
-import Header from "@/components/header";
+import Link from "next/link";
 
 export default function ExplorePage() {
   const { user, isLoading: authLoading } = useAuth();
@@ -17,15 +16,17 @@ export default function ExplorePage() {
   return (
     <div className="min-h-screen bg-muted/30">
 
-      <Header />
-
       <main className="mx-auto max-w-3xl p-10">
 
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-4xl font-bold">Explore</h1>
 
           {user && (
-            <CreatePostDialog />
+            <Link href="/new_post">
+                <Button>
+                    Create Journal
+                </Button>
+            </Link>
           )}
         </div>
 

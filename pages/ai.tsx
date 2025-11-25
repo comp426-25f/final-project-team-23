@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import Header from "@/components/header";
 
 export default function TravelPlannerPage() {
   const [input, setInput] = useState("");
@@ -61,8 +60,6 @@ export default function TravelPlannerPage() {
   };
 
   return (
-    <div>
-    <Header />
     <div className="flex h-screen flex-col gap-4 p-6 bg-gradient-to-b from-[#F3F7FB] to-white">
       <h1 className="text-3xl font-semibold text-center text-[#0A3D62]">
         ✈️ AI Travel Itinerary Planner
@@ -94,7 +91,6 @@ export default function TravelPlannerPage() {
           Generate Itinerary
         </Button>
       </div>
-    </div>
     </div>
   );
 }

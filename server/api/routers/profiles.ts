@@ -129,6 +129,7 @@ const getPostsForProfile = publicProcedure
       with: {
         author: true,
         likes: true,
+        destination: true,
       },
       orderBy: desc(postsTable.postedAt),
       limit: 25,

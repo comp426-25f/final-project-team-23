@@ -17,10 +17,13 @@ export const uploadPostFileToSupabase = async (
 ) => {
   const currentTimestamp = Date.now().toLocaleString();
   const { data: fileData, error: uploadError } = await supabase.storage
-    .from("images")
+    .from("post-images")
     .upload(`upload_${subject.id}_${currentTimestamp}`, file);
 
   if (uploadError) {
+    const buckets = await supabase.storage.listBuckets();
+    console.log(buckets);
+
     console.error({
       code: "INTERNAL_SERVER_ERROR",
       message: `Failed to upload file to Supabase: ${uploadError.message}`,

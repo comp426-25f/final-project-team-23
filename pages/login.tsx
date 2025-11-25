@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
 import { createSupabaseComponentClient } from "@/utils/supabase/clients/component";
-
+import { api } from "@/utils/trpc/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,7 @@ import { Globe2 } from "lucide-react";
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createSupabaseComponentClient();
+  const apiUtils = api.useUtils();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,15 +35,15 @@ export default function LoginPage() {
       return;
     }
 
-    router.push("/explore");
+    await apiUtils.invalidate();
+
+    router.push("/");
   };
 
   return (
     <div className="min-h-screen bg-muted/30 flex items-center justify-center p-6">
-      {/* Outer card */}
       <div className="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg p-8 border">
 
-        {/* Logo + header */}
         <div className="flex flex-col items-center text-center mb-8">
           <div className="h-12 w-12 flex items-center justify-center rounded-full bg-primary/10 text-primary">
             <Globe2 className="h-6 w-6" />
@@ -64,29 +65,28 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Form */}
         <div className="flex flex-col gap-5">
           <div className="grid gap-1">
-            <Label>Email</Label>
-            <Input
-              type="email"
-              placeholder="you@example.com"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-
-          <div className="grid gap-1">
-            <Label>Password</Label>
-            <Input
-              type="password"
-              placeholder="your password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          <Button className="w-full mt-2 text-lg" onClick={logIn}>
-            Log In
-          </Button>
+            <Label htmlFor="email">Email</Label>
+                <Input
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="m@example.com"
+                  required
+                />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="email">Password</Label>
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <Button className="w-full" onClick={logIn}>
+                Login
+              </Button>
         </div>
 
       </div>

@@ -11,6 +11,7 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { api } from "@/utils/trpc/api";
+import Header from "@/components/header";
 
 function App({ Component, pageProps }: AppProps) {
   return (
@@ -20,6 +21,7 @@ function App({ Component, pageProps }: AppProps) {
       enableSystem
       disableTransitionOnChange
     >
+      <Header />
       <Component {...pageProps} />
     </ThemeProvider>
   );

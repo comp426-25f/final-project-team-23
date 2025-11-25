@@ -24,8 +24,6 @@ export default function HomePage() {
   
   return (
     <div className="min-h-screen bg-muted/30">
-
-
       <main className="mx-auto max-w-6xl p-8 flex flex-col gap-8">
 
         <Card className="shadow-md">

@@ -10,6 +10,7 @@ import {
   likesTable,
   followsTable,
   profilesTable,
+  destinationsTable,
 } from "@/server/db/schema";
 import { db } from "@/server/db";
 import { eq, and, desc, inArray, sql } from "drizzle-orm";
@@ -106,14 +107,26 @@ const getFeed = protectedProcedure
         postedAt: postsTable.postedAt,
         attachmentUrl: postsTable.attachmentUrl,
 
+        destination: sql`
+          CASE
+          WHEN ${destinationsTable.id} IS NOT NULL THEN
+          json_build_object(
+            'id', ${destinationsTable.id},
+            'name', ${destinationsTable.name},
+            'country', ${destinationsTable.country}, 
+            'continent', ${destinationsTable.continent}
+          )::json
+          ELSE NULL
+          END
+        `.as("destination"),
+
         author: {
           id: profilesTable.id,
-          name: profilesTable.displayName,
-          handle: profilesTable.username,
+          displayName: profilesTable.displayName,
+          username: profilesTable.username,
           avatarUrl: profilesTable.avatarUrl,
         },
 
-        // Had to look this up
         likes: sql`
           COALESCE(
             json_agg(
@@ -126,12 +139,20 @@ const getFeed = protectedProcedure
       .from(postsTable)
       .leftJoin(profilesTable, eq(postsTable.authorId, profilesTable.id))
       .leftJoin(likesTable, eq(postsTable.id, likesTable.postId))
+      .leftJoin(
+        destinationsTable,
+        eq(postsTable.destinationId, destinationsTable.id),
+      )
       .groupBy(
         postsTable.id,
         profilesTable.id,
         profilesTable.displayName,
         profilesTable.username,
         profilesTable.avatarUrl,
+
+        destinationsTable.id,
+        destinationsTable.name,
+        destinationsTable.country,
       )
       .orderBy(desc(postsTable.postedAt))
       .limit(25)
@@ -201,64 +222,6 @@ const getFollowingFeed = protectedProcedure
     return Post.array().parse(posts);
   });
 
-const getLikesFeed = protectedProcedure
-  .input(PaginationParams)
-  .output(Post.array())
-  .query(async ({ ctx, input }) => {
-    const { subject } = ctx;
-    const { cursor } = input;
-
-    const liked = await db
-      .select({ postId: likesTable.postId })
-      .from(likesTable)
-      .where(eq(likesTable.profileId, subject.id))
-      .execute();
-
-    const likedIds = liked.map((l) => l.postId);
-    if (likedIds.length === 0) return [];
-
-    const posts = await db
-      .select({
-        id: postsTable.id,
-        content: postsTable.content,
-        postedAt: postsTable.postedAt,
-        attachmentUrl: postsTable.attachmentUrl,
-        author: {
-          id: profilesTable.id,
-          name: profilesTable.displayName,
-          handle: profilesTable.username,
-          avatarUrl: profilesTable.avatarUrl,
-        },
-      })
-      .from(postsTable)
-      .leftJoin(profilesTable, eq(postsTable.authorId, profilesTable.id))
-      .where(inArray(postsTable.id, likedIds))
-      .orderBy(desc(postsTable.postedAt))
-      .limit(25)
-      .offset(cursor)
-      .execute();
-
-    const postIds = posts.map((p) => p.id);
-
-    const likes = await db
-      .select({
-        postId: likesTable.postId,
-        profileId: likesTable.profileId,
-      })
-      .from(likesTable)
-      .where(inArray(likesTable.postId, postIds))
-      .execute();
-
-    const likesByPostId = Object.groupBy(likes, (l) => l.postId);
-
-    const postsWithLikes = posts.map((p) => ({
-      ...p,
-      likes: likesByPostId[p.id] ?? [],
-    }));
-
-    return Post.array().parse(postsWithLikes);
-  });
-
 const createPost = protectedProcedure
   .input(DraftPost)
   .mutation(async ({ ctx, input }) => {
@@ -272,7 +235,7 @@ const createPost = protectedProcedure
         content,
         attachmentUrl,
         authorId: subject.id,
-        destinationId: null,
+        destinationId: input.destinationId,
       })
       .execute();
   });
@@ -282,6 +245,5 @@ export const postsApiRouter = createTRPCRouter({
   toggleLike: toggleLike,
   getFeed: getFeed,
   getFollowingFeed: getFollowingFeed,
-  getLikesFeed: getLikesFeed,
   createPost: createPost,
 });

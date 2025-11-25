@@ -108,7 +108,7 @@ export default function PostCard({ user, post }: PostCardProps) {
             <Image
               className="rounded-xl"
               src={
-                supabase.storage.from("images").getPublicUrl(post.attachmentUrl)
+                supabase.storage.from("post-images").getPublicUrl(post.attachmentUrl)
                   .data.publicUrl
               }
               alt="Image"

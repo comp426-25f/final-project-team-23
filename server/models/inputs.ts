@@ -44,6 +44,7 @@ export const PaginationParams = z.object({
 export const DraftPost = z.object({
   content: z.string(),
   attachmentUrl: z.string().nullish(),
+  destinationId: z.string().uuid(),
 });
 
 export const DraftProfileImage = z.object({ avatarUrl: z.string().nullish() });
