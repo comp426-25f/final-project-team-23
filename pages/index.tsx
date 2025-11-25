@@ -21,7 +21,7 @@ export default function HomePage() {
   const router = useRouter();
   const apiUtils = api.useUtils();
   const { data } = api.profiles.getAuthedUserProfile.useQuery();
-  
+
   return (
     <div className="min-h-screen bg-muted/30">
 
@@ -33,7 +33,7 @@ export default function HomePage() {
             <CardTitle className="text-4xl font-bold">Welcome to WANDR</CardTitle>
           </CardHeader>
           <CardContent className="text-lg text-muted-foreground">
-            Your all-in-one travel companion — plan trips, explore destinations, 
+            Your all-in-one travel companion — plan trips, explore destinations,
             and connect with your travel friends.
           </CardContent>
         </Card>
@@ -48,6 +48,18 @@ export default function HomePage() {
               Discover popular locations and curated itineraries.
               <Button className="mt-4 w-full" asChild>
                 <a href="/explore">Explore</a>
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition">
+            <CardHeader>
+              <CardTitle>Your Iteneraries</CardTitle>
+            </CardHeader>
+            <CardContent className="text-muted-foreground">
+              Create a new travel itinerary for your next adventure!
+              <Button className="mt-4 w-full" asChild>
+                <a href="/itineraries">Itineraries</a>
               </Button>
             </CardContent>
           </Card>

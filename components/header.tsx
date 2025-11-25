@@ -2,44 +2,51 @@ import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuL
 
 export default function Header() {
 
-    return(
+  return (
     <header className="w-full border-b bg-white/70 backdrop-blur-md">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
 
-          <div className="text-3xl font-extrabold tracking-tight">
-            WANDR<span className="text-primary">.</span>
-          </div>
-
-          <NavigationMenu>
-            <NavigationMenuList className="flex items-center gap-6">
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/explore" className="text-md font-medium hover:text-primary">
-                  Explore
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/friends" className="text-md font-medium hover:text-primary">
-                  Friends Feed
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/ai" className="text-md font-medium hover:text-primary">
-                  AI Trip Planner
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-
-              <NavigationMenuItem>
-                <NavigationMenuLink href="/groups" className="text-md font-medium hover:text-primary">
-                  Group Chats
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+        <div className="text-3xl font-extrabold tracking-tight">
+          WANDR<span className="text-primary">.</span>
         </div>
-      </header>
-    )};
+
+        <NavigationMenu>
+          <NavigationMenuList className="flex items-center gap-6">
+            <NavigationMenuItem>
+              <NavigationMenuLink href="/explore" className="text-md font-medium hover:text-primary">
+                Explore
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavigationMenuLink href="/itineraries" className="text-md font-medium hover:text-primary">
+                Itineraries
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavigationMenuLink href="/friends" className="text-md font-medium hover:text-primary">
+                Friends Feed
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavigationMenuLink href="/ai" className="text-md font-medium hover:text-primary">
+                AI Trip Planner
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+
+            <NavigationMenuItem>
+              <NavigationMenuLink href="/groups" className="text-md font-medium hover:text-primary">
+                Group Chats
+              </NavigationMenuLink>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
+      </div>
+    </header>
+  )
+};
 
 // import { Bird, LogOut, UserRound } from "lucide-react";
 // import Link from "next/link";
