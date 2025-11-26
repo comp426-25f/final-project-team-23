@@ -171,70 +171,26 @@ const getFollowingFeed = protectedProcedure
     const following = await db
       .select({ followingId: followsTable.followingId })
       .from(followsTable)
-      .where(eq(followsTable.followerId, subject.id))
-      .execute();
+      .where(eq(followsTable.followerId, subject.id));
 
     const followedIds = following.map((f) => f.followingId);
     console.log("Following IDs:", followedIds);
 
-    if (followedIds.length === 0) return [];
+    if (followedIds.length === 0) {
+      return [];
+    }
 
-    const posts = await db
-      .select({
-        id: postsTable.id,
-        content: postsTable.content,
-        postedAt: postsTable.postedAt,
-        attachmentUrl: postsTable.attachmentUrl,
-
-        destination: sql`
-          CASE
-          WHEN ${destinationsTable.id} IS NOT NULL THEN
-          json_build_object(
-            'id', ${destinationsTable.id},
-            'name', ${destinationsTable.name},
-            'country', ${destinationsTable.country}, 
-            'continent', ${destinationsTable.continent}
-          )::json
-          ELSE NULL
-          END
-        `.as("destination"),
-
-        author: {
-          id: profilesTable.id,
-          name: profilesTable.displayName,
-          handle: profilesTable.username,
-          avatarUrl: profilesTable.avatarUrl,
-        },
-
-        // Had to look this up
-        likes: sql`
-          COALESCE(
-            json_agg(
-              json_build_object('profileId', ${likesTable.profileId})
-            ) FILTER (WHERE ${likesTable.profileId} IS NOT NULL),
-            '[]'
-          )
-        `.as("likes"),
-      })
-      .from(postsTable)
-      .leftJoin(profilesTable, eq(postsTable.authorId, profilesTable.id))
-      .leftJoin(likesTable, eq(postsTable.id, likesTable.postId))
-      .groupBy(
-        postsTable.id,
-        profilesTable.id,
-        profilesTable.displayName,
-        profilesTable.username,
-        profilesTable.avatarUrl,
-
-        destinationsTable.id,
-        destinationsTable.name,
-        destinationsTable.country,
-      )
-      .where(inArray(postsTable.authorId, followedIds))
-      .orderBy(desc(postsTable.postedAt))
-      .limit(25)
-      .offset(cursor ?? 0)
-      .execute();
+    const posts = await db.query.postsTable.findMany({
+      where: (posts, { inArray }) => inArray(posts.authorId, followedIds),
+      with: {
+        author: true,
+        likes: true,
+        destination: true,
+      },
+      orderBy: desc(postsTable.postedAt),
+      limit: 25,
+      offset: cursor ?? 0,
+    });
 
     return Post.array().parse(posts);
   });
