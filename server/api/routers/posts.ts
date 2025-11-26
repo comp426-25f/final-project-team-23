@@ -186,6 +186,19 @@ const getFollowingFeed = protectedProcedure
         postedAt: postsTable.postedAt,
         attachmentUrl: postsTable.attachmentUrl,
 
+        destination: sql`
+          CASE
+          WHEN ${destinationsTable.id} IS NOT NULL THEN
+          json_build_object(
+            'id', ${destinationsTable.id},
+            'name', ${destinationsTable.name},
+            'country', ${destinationsTable.country}, 
+            'continent', ${destinationsTable.continent}
+          )::json
+          ELSE NULL
+          END
+        `.as("destination"),
+
         author: {
           id: profilesTable.id,
           name: profilesTable.displayName,
@@ -212,6 +225,10 @@ const getFollowingFeed = protectedProcedure
         profilesTable.displayName,
         profilesTable.username,
         profilesTable.avatarUrl,
+
+        destinationsTable.id,
+        destinationsTable.name,
+        destinationsTable.country,
       )
       .where(inArray(postsTable.authorId, followedIds))
       .orderBy(desc(postsTable.postedAt))

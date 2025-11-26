@@ -43,7 +43,11 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
   );
 
   const { mutate: toggleFollowing } =
-    api.profiles.toggleFollowingProfile.useMutation();
+    api.profiles.toggleFollowingProfile.useMutation({
+      onSuccess: async () => {
+        await apiUtils.posts.getFollowingFeed.invalidate();
+      },
+  });
 
   const followButtonPressed = async () => {
     toggleFollowing({ profileId });
