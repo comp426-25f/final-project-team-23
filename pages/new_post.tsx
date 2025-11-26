@@ -1,4 +1,4 @@
-import { useState, useRef, SetStateAction } from "react";
+import { useState, useRef } from "react";
 import { GetServerSidePropsContext } from "next";
 
 import { createSupabaseComponentClient } from "@/utils/supabase/clients/component";
@@ -22,7 +22,6 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 import { ImagePlus, Send, Loader2Icon, ArrowLeft } from "lucide-react";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import {
   Select,
   SelectTrigger,
