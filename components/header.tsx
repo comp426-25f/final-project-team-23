@@ -25,7 +25,6 @@ export default function Header() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
 
           <div className="flex flex-row text-3xl font-extrabold tracking-tight">
-            {/* <Globe2 /> */}
             WANDR<span className="text-primary">.</span>
           </div>
 

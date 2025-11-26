@@ -60,12 +60,12 @@ export default function TravelPlannerPage() {
   };
 
   return (
-    <div className="flex h-screen flex-col gap-4 p-6 bg-gradient-to-b from-[#F3F7FB] to-white">
+    <div className="flex h-screen flex-col gap-4 p-6">
       <h1 className="text-3xl font-semibold text-center text-[#0A3D62]">
         ✈️ AI Travel Itinerary Planner
       </h1>
 
-      <Card className="flex-1 overflow-y-auto p-6 shadow-inner" ref={scrollRef}>
+      <Card className="h-[330px] sm:h-[380px] md:h-[510px] overflow-y-auto p-4 shadow-inner" ref={scrollRef}>
         {stream ? (
           <pre className="whitespace-pre-wrap text-[15px] leading-relaxed">
             {stream}
@@ -82,7 +82,7 @@ export default function TravelPlannerPage() {
           placeholder="Describe your trip (e.g., 'Barcelona in June, 5 days, beaches, nightlife, photography')"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          className="min-h-[120px]"
+          className="min-h-[60px]"
         />
         <Button
           className="bg-[#0A3D62] text-white hover:bg-[#0C4F85]"
