@@ -23,19 +23,19 @@ export default function TravelPlannerPage() {
         },
         onData: (chunk) => {
           try {
-          const data = JSON.parse(chunk);
+            const data = JSON.parse(chunk);
 
-          if (data.done) {
-            setEnabled(false);
-            return;
-          }
+            if (data.done) {
+              setEnabled(false);
+              return;
+            }
 
-          if (data.delta) {
-            setStream((prev) => prev + data.delta);
+            if (data.delta) {
+              setStream((prev) => prev + data.delta);
+            }
+          } catch {
+            setStream((prev) => prev + chunk);
           }
-        } catch {
-          setStream((prev) => prev + chunk);
-        }
         },
         onError: (err) => {
           toast.error(err.message || "Could not generate itinerary.");
