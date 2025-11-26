@@ -67,7 +67,6 @@ export default function PostCard({ user, post }: PostCardProps) {
             </p>
           </Link>
           <div className="flex flex-row items-center">
-            {/* Handle likes */}
             <Button
               variant="ghost"
               onClick={async () => {
@@ -102,8 +101,13 @@ export default function PostCard({ user, post }: PostCardProps) {
             </Button>
           </div>
         </div>
+        {post.destination && (
+          <p className="text-sm text-muted-foreground">
+            📍 <span className="font-medium">{post.destination.name}</span>,{" "}
+            {post.destination.country}
+          </p>
+        )}
         <div className="my-2 flex min-w-full flex-col gap-4">
-          {/* Show the post's image, if it exists. */}
           {post.attachmentUrl && (
             <Image
               className="rounded-xl"
