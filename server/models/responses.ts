@@ -125,6 +125,11 @@ export const Itinerary = z.object({
   author: Profile,
 });
 
+export const EditedItinerary = Itinerary.omit({
+  createdAt: true,
+  author: true,
+});
+
 export const placeholder = {};
 
 // import { z } from "zod";
