@@ -45,7 +45,7 @@ export const Destination = z.object({
 });
 
 export const Post = z.object({
-  id: z.number(),
+  id: z.string().uuid(),
   content: z.string(),
   postedAt: z.date({ coerce: true }),
   author: Profile,

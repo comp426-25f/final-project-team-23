@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import Header from "@/components/header";
 
 export default function TravelPlannerPage() {
   const [input, setInput] = useState("");
@@ -61,39 +60,36 @@ export default function TravelPlannerPage() {
   };
 
   return (
-    <div>
-      <Header />
-      <div className="flex h-screen flex-col gap-4 p-6 bg-linear-to-b from-[#F3F7FB] to-white">
-        <h1 className="text-3xl font-semibold text-center text-[#0A3D62]">
-          ✈️ AI Travel Itinerary Planner
-        </h1>
+    <div className="flex h-screen flex-col gap-4 p-6 bg-gradient-to-b from-[#F3F7FB] to-white">
+      <h1 className="text-3xl font-semibold text-center text-[#0A3D62]">
+        ✈️ AI Travel Itinerary Planner
+      </h1>
 
-        <Card className="flex-1 overflow-y-auto p-6 shadow-inner" ref={scrollRef}>
-          {stream ? (
-            <pre className="whitespace-pre-wrap text-[15px] leading-relaxed">
-              {stream}
-            </pre>
-          ) : (
-            <p className="text-center text-gray-400 italic mt-12">
-              Your personalized itinerary will appear here...
-            </p>
-          )}
-        </Card>
+      <Card className="flex-1 overflow-y-auto p-6 shadow-inner" ref={scrollRef}>
+        {stream ? (
+          <pre className="whitespace-pre-wrap text-[15px] leading-relaxed">
+            {stream}
+          </pre>
+        ) : (
+          <p className="text-center text-gray-400 italic mt-12">
+            Your personalized itinerary will appear here...
+          </p>
+        )}
+      </Card>
 
-        <div className="flex flex-col gap-3">
-          <Textarea
-            placeholder="Describe your trip (e.g., 'Barcelona in June, 5 days, beaches, nightlife, photography')"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="min-h-[120px]"
-          />
-          <Button
-            className="bg-[#0A3D62] text-white hover:bg-[#0C4F85]"
-            onClick={handleGenerate}
-          >
-            Generate Itinerary
-          </Button>
-        </div>
+      <div className="flex flex-col gap-3">
+        <Textarea
+          placeholder="Describe your trip (e.g., 'Barcelona in June, 5 days, beaches, nightlife, photography')"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          className="min-h-[120px]"
+        />
+        <Button
+          className="bg-[#0A3D62] text-white hover:bg-[#0C4F85]"
+          onClick={handleGenerate}
+        >
+          Generate Itinerary
+        </Button>
       </div>
     </div>
   );

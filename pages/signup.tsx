@@ -19,13 +19,11 @@ export default function SignUpPage() {
   const supabase = createSupabaseComponentClient();
   const apiUtils = api.useUtils();
 
-  // required form fields
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [handle, setHandle] = useState("");
   const [password, setPassword] = useState("");
 
-  // required mutation for profile creation
   const { mutate: handleNewUser } = api.profiles.handleNewUser.useMutation();
 
   const signUp = async () => {
@@ -57,7 +55,6 @@ export default function SignUpPage() {
     <div className="min-h-screen bg-muted/30 flex items-center justify-center p-6">
       <div className="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg p-8 border">
 
-        {/* Header */}
         <div className="flex flex-col items-center text-center mb-8">
           <div className="h-12 w-12 flex items-center justify-center rounded-full bg-primary/10 text-primary">
             <Globe2 className="h-6 w-6" />
@@ -79,10 +76,8 @@ export default function SignUpPage() {
           </p>
         </div>
 
-        {/* Form */}
         <div className="flex flex-col gap-5">
 
-          {/* Email */}
           <div className="grid gap-1">
             <Label>Email</Label>
             <Input
@@ -93,7 +88,6 @@ export default function SignUpPage() {
             />
           </div>
 
-          {/* Name */}
           <div className="grid gap-1">
             <Label>Full Name</Label>
             <Input
@@ -103,7 +97,6 @@ export default function SignUpPage() {
             />
           </div>
 
-          {/* Handle */}
           <div className="grid gap-1">
             <Label>Handle</Label>
             <div className="relative">
@@ -117,7 +110,6 @@ export default function SignUpPage() {
             </div>
           </div>
 
-          {/* Password */}
           <div className="grid gap-1">
             <Label>Password</Label>
             <Input

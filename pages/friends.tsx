@@ -8,10 +8,10 @@ import { Subject } from "@/server/models/auth";
 import { useAuth } from "@/utils/use-auth";
 import Link from "next/link";
 
-export default function ExplorePage() {
+export default function FriendsFeedPage() {
   const { user, isLoading: authLoading } = useAuth();
 
-  const { data: posts, isLoading: postsLoading } = api.posts.getFeed.useQuery({ cursor: 0 });
+  const {data: posts, isLoading: postsLoading, } = api.posts.getFollowingFeed.useQuery({ cursor: 0 });
 
   return (
     <div className="min-h-screen bg-muted/30">
@@ -19,7 +19,7 @@ export default function ExplorePage() {
       <main className="mx-auto max-w-3xl p-10">
 
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-4xl font-bold">Explore</h1>
+          <h1 className="text-4xl font-bold">Friends Feed</h1>
 
           {user && (
             <Link href="/new_post">
@@ -31,7 +31,7 @@ export default function ExplorePage() {
         </div>
 
         <p className="mt-2 text-lg text-muted-foreground mb-6">
-          Discover trips, itineraries, and travel moments from people around the world.
+          See what incredible trips your friends have been on!
         </p>
 
         {authLoading || postsLoading ? (
@@ -40,7 +40,7 @@ export default function ExplorePage() {
           </div>
         ) : !posts || posts.length === 0 ? (
           <div className="text-center text-muted-foreground py-20">
-            <p>No travel posts yet. Be the first to share your adventures!</p>
+            <p>No travel posts yet. Be the first to tell your friends about your adventures!</p>
           </div>
         ) : (
           <div className="flex flex-col divide-y divide-border">
