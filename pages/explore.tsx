@@ -16,7 +16,7 @@ export default function ExplorePage() {
   return (
     <div className="min-h-screen bg-muted/30">
 
-      <main className="mx-auto max-w-3xl p-10">
+      <main className="mx-auto max-w-6xl p-10">
 
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-4xl font-bold">Explore</h1>
@@ -35,19 +35,19 @@ export default function ExplorePage() {
         </p>
 
         {authLoading || postsLoading ? (
-          <div className="flex justify-center py-20">
+        <div className="flex justify-center py-20">
             <Loader2 className="animate-spin h-10 w-10 text-primary" />
-          </div>
+        </div>
         ) : !posts || posts.length === 0 ? (
-          <div className="text-center text-muted-foreground py-20">
+        <div className="text-center text-muted-foreground py-20">
             <p>No travel posts yet. Be the first to share your adventures!</p>
-          </div>
+        </div>
         ) : (
-          <div className="flex flex-col divide-y divide-border">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
             {posts.map((post) => (
-              <PostCard key={post.id} user={user as Subject} post={post} />
+            <PostCard key={post.id} user={user as Subject} post={post} />
             ))}
-          </div>
+        </div>
         )}
       </main>
     </div>
