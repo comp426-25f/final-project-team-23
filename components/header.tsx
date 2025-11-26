@@ -1,9 +1,7 @@
 import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@radix-ui/react-navigation-menu";
-import { Globe2 } from "lucide-react";
 import { createSupabaseComponentClient } from "@/utils/supabase/clients/component";
 import { useRouter } from "next/router";
 import { LogOut, UserRound } from "lucide-react";
-import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { api } from "@/utils/trpc/api";
 import {
