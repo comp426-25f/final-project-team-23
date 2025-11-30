@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { Globe2, AtSign } from "lucide-react";
+import { Globe2, AtSign, Cloud } from "lucide-react";
 
 import { api } from "@/utils/trpc/api";
 
@@ -52,80 +52,97 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen bg-muted/30 flex items-center justify-center p-6">
-      <div className="w-full max-w-sm bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg p-8 border">
+    <div className="min-h-screen relative flex items-center justify-center p-6 overflow-hidden horizon-bg">
 
-        <div className="flex flex-col items-center text-center mb-8">
-          <div className="h-12 w-12 flex items-center justify-center rounded-full bg-primary/10 text-primary">
-            <Globe2 className="h-6 w-6" />
-          </div>
+    <div className="absolute top-10 right-24 z-0">
+      <Cloud className="w-36 h-36 fill-white text-white opacity-80 blur-[2px]" />
+    </div>
+    <div className="absolute top-25 left-30 z-0">
+      <Cloud className="w-44 h-44 fill-white text-white opacity-75 blur-[3px]" />
+    </div>
 
-          <h1 className="mt-4 text-3xl font-extrabold tracking-tight">
-            Create your WANDR<span className="text-primary">.</span> account
+    <div className="absolute bottom-0 right-0 z-10 pointer-events-none translate-x-[30%] translate-y-[30%]">
+      <Globe2 className="w-[600px] h-[600px] text-[#4ab5ff] opacity-30 blur-[6px]" />
+    </div>
+    <div className="relative z-10 w-full max-w-sm bg-white/85 backdrop-blur-sm rounded-2xl shadow-xl border border-white/40 p-8">
+
+      <div className="flex flex-col items-center text-center mb-8">
+        <div className="h-12 w-12 flex items-center justify-center rounded-full bg-primary/10 text-primary">
+          <Globe2 className="h-6 w-6" />
+        </div>
+        <h1 className="text-4xl font-black tracking-tight text-[#0A2A43]">
+            wandr<span className="text-primary">.</span>
           </h1>
 
-          <p className="text-muted-foreground text-sm mt-2">
-            Join a community of travelers exploring the world.
-          </p>
+        <h2 className="mt-4 text-3xl font-black tracking-tight text-[#0A2A43]">
+          Create your account
+        </h2>
 
-          <p className="text-sm mt-1">
-            Already have an account?{" "}
-            <Link href="/login" className="text-primary underline">
-              Log in here
-            </Link>
-          </p>
+        <p className="text-muted-foreground text-sm mt-2 font-medium">
+          Join a community of travelers exploring the world.
+        </p>
+
+        <p className="text-sm mt-1 font-medium">
+          Already have an account?{" "}
+          <Link href="/login" className="text-primary underline">
+            Log in here
+          </Link>
+        </p>
+      </div>
+
+      <div className="flex flex-col gap-5">
+        
+        <div className="grid gap-1">
+          <Label>Email</Label>
+          <Input
+            type="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="rounded-xl border-white/50 bg-white/70 shadow-sm"
+          />
         </div>
 
-        <div className="flex flex-col gap-5">
-
-          <div className="grid gap-1">
-            <Label>Email</Label>
-            <Input
-              type="email"
-              placeholder="you@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-
-          <div className="grid gap-1">
-            <Label>Full Name</Label>
-            <Input
-              placeholder="Jane Doe"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-
-          <div className="grid gap-1">
-            <Label>Handle</Label>
-            <div className="relative">
-              <AtSign className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                className="pl-8"
-                placeholder="jane"
-                value={handle}
-                onChange={(e) => setHandle(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="grid gap-1">
-            <Label>Password</Label>
-            <Input
-              type="password"
-              placeholder="Create a password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-
-          <Button className="w-full mt-2 text-lg" onClick={signUp}>
-            Sign Up
-          </Button>
-
+        <div className="grid gap-1">
+          <Label>Full Name</Label>
+          <Input
+            placeholder="Jane Doe"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="rounded-xl border-white/50 bg-white/70 shadow-sm"
+          />
         </div>
+
+        <div className="grid gap-1">
+          <Label>Handle</Label>
+          <div className="relative">
+            <AtSign className="absolute left-2 top-3 h-4 w-4 text-gray-500" />
+            <Input
+              className="pl-8 rounded-xl border-white/50 bg-white/70 shadow-sm"
+              placeholder="jane"
+              value={handle}
+              onChange={(e) => setHandle(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="grid gap-1">
+          <Label>Password</Label>
+          <Input
+            type="password"
+            placeholder="Create a password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="rounded-xl border-white/50 bg-white/70 shadow-sm"
+          />
+        </div>
+
+        <Button onClick={signUp} className="w-full py-6 rounded-xl text-lg font-bold shadow-md mt-2">
+          Sign Up
+        </Button>
       </div>
     </div>
-  );
+  </div>
+);
+
 }

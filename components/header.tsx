@@ -1,4 +1,4 @@
-import { NavigationMenu, NavigationMenuItem, NavigationMenuLink, NavigationMenuList } from "@radix-ui/react-navigation-menu";
+import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "@radix-ui/react-navigation-menu";
 import { createSupabaseComponentClient } from "@/utils/supabase/clients/component";
 import { useRouter } from "next/router";
 import { LogOut, UserRound } from "lucide-react";
@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import Link from "next/link";
 
 export default function Header() {
   const supabase = createSupabaseComponentClient();
@@ -23,40 +24,42 @@ export default function Header() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
 
         <div className="flex flex-row text-3xl font-extrabold tracking-tight">
-          {/* <Globe2 /> */}
-          WANDR<span className="text-primary">.</span>
+          <Link href="/" className="block w-fit text-4xl font-black text-[#0A2A43]">
+          wandr<span className="text-[#ffb88c]">.</span>
+          </Link>
+
         </div>
 
         <NavigationMenu>
           <NavigationMenuList className="flex items-center gap-6">
             <NavigationMenuItem>
-              <NavigationMenuLink href="/explore" className="text-md font-medium hover:text-primary">
+              <Link href="/explore" className="text-md font-medium hover:text-primary">
                 Explore
-              </NavigationMenuLink>
+              </Link>
             </NavigationMenuItem>
 
             <NavigationMenuItem>
-              <NavigationMenuLink href="/itineraries" className="text-md font-medium hover:text-primary">
+              <Link href="/itineraries" className="text-md font-medium hover:text-primary">
                 Itineraries
-              </NavigationMenuLink>
+              </Link>
             </NavigationMenuItem>
 
             <NavigationMenuItem>
-              <NavigationMenuLink href="/friends" className="text-md font-medium hover:text-primary">
-                Friends Feed
-              </NavigationMenuLink>
+              <Link href="/friends" className="text-md font-medium hover:text-primary">
+                Friends
+              </Link>
             </NavigationMenuItem>
 
             <NavigationMenuItem>
-              <NavigationMenuLink href="/ai" className="text-md font-medium hover:text-primary">
-                AI Trip Planner
-              </NavigationMenuLink>
+              <Link href="/ai" className="text-md font-medium hover:text-primary">
+                AI Planner
+              </Link>
             </NavigationMenuItem>
 
             <NavigationMenuItem>
-              <NavigationMenuLink href="/groups" className="text-md font-medium hover:text-primary">
-                Group Chats
-              </NavigationMenuLink>
+              <Link href="/groups" className="text-md font-medium hover:text-primary">
+                Connect
+              </Link>
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>

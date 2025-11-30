@@ -3,89 +3,102 @@ import { Button } from "@/components/ui/button";
 import { createSupabaseServerClient } from "@/utils/supabase/clients/server-props";
 import { GetServerSidePropsContext } from "next";
 import Link from "next/link"
+import { Map, BookOpen, Landmark, Music, Trees } from "lucide-react";
 
 export default function HomePage() {
 
-  return (
-    <div className="min-h-screen bg-muted/30">
-      <main className="mx-auto max-w-6xl p-8 flex flex-col gap-8">
+return (
+  <div className="min-h-screen relative horizon-bg">
+    <main className="mx-auto w-full max-w-6xl px-6 py-12 flex flex-col gap-10">
 
-        <Card className="shadow-md">
-          <CardHeader>
-            <CardTitle className="text-4xl font-bold">Welcome to WANDR</CardTitle>
+      <Card className="bg-white/80 border border-white/40 rounded-2xl shadow-xl backdrop-blur-sm">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-5xl font-black text-[#0A2A43] tracking-tight">
+            Welcome to <strong>wandr<span className="text-[#ffb88c]">.</span></strong>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="text-lg font-medium text-gray-700 leading-relaxed">
+          Your all-in-one travel companion — plan trips, explore destinations,
+          and connect with travel friends around the globe.
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full">
+
+        <Card className="bg-white/70 border border-white/40 rounded-2xl shadow-lg">
+          <CardHeader className="pb-1">
+            <CardTitle className="flex items-center gap-2 text-2xl font-extrabold text-[#0A2A43]">
+              <Map className="h-6 w-6 text-[#ffb88c]" /> Explore Destinations
+            </CardTitle>
           </CardHeader>
-          <CardContent className="text-lg text-muted-foreground">
-            Your all-in-one travel companion — plan trips, explore destinations,
-            and connect with your travel friends.
+          <CardContent className="text-gray-700 font-medium">
+            Discover popular cities, landmarks, and curated itineraries.
+            <Button className="mt-4 w-full py-6 text-lg font-bold rounded-xl bg-[#0A2A43] text-white">
+              <Link href="/explore">Explore</Link>
+            </Button>
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="bg-white/70 border border-white/40 rounded-2xl shadow-lg">
+          <CardHeader className="pb-1">
+            <CardTitle className="flex items-center gap-2 text-2xl font-extrabold text-[#0A2A43]">
+              <BookOpen className="h-6 w-6 text-[#ffb88c]" /> Your Itineraries
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-gray-700 font-medium">
+            Save, view, and build out your travel plans.
+            <Button className="mt-4 w-full py-6 text-lg font-bold rounded-xl bg-[#0A2A43] text-white">
+              <Link href="/itineraries">View Itineraries</Link>
+            </Button>
+          </CardContent>
+        </Card>
 
-          <Card className="hover:shadow-lg transition">
-            <CardHeader>
-              <CardTitle>Explore Destinations</CardTitle>
-            </CardHeader>
-            <CardContent className="text-muted-foreground">
-              Discover popular locations and curated itineraries.
-              <Button className="mt-4 w-full" asChild>
-                <Link href="/explore">Explore</Link>
-              </Button>
-            </CardContent>
-          </Card>
+        <Card className="bg-white/70 border border-white/40 rounded-2xl shadow-lg">
+          <CardHeader className="pb-1">
+            <CardTitle className="flex items-center gap-2 text-2xl font-extrabold text-[#0A2A43]">
+              <Landmark className="h-6 w-6 text-[#ffb88c]" /> AI Trip Planner
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-gray-700 font-medium">
+            Tell WANDR where you want to go — get instant itinerary suggestions.
+            <Button className="mt-4 w-full py-6 text-lg font-bold rounded-xl bg-[#0A2A43] text-white">
+              <Link href="/ai">Plan a Trip</Link>
+            </Button>
+          </CardContent>
+        </Card>
 
-          <Card className="hover:shadow-lg transition">
-            <CardHeader>
-              <CardTitle>Your Iteneraries</CardTitle>
-            </CardHeader>
-            <CardContent className="text-muted-foreground">
-              Create a new travel itinerary for your next adventure!
-              <Button className="mt-4 w-full" asChild>
-                <Link href="/itineraries">Itineraries</Link>
-              </Button>
-            </CardContent>
-          </Card>
+        <Card className="bg-white/70 border border-white/40 rounded-2xl shadow-lg">
+          <CardHeader className="pb-1">
+            <CardTitle className="flex items-center gap-2 text-2xl font-extrabold text-[#0A2A43]">
+              <Trees className="h-6 w-6 text-[#ffb88c]" /> Friends Feed
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-gray-700 font-medium">
+            See trips and adventures your friends are taking.
+            <Button className="mt-4 w-full py-6 text-lg font-bold rounded-xl bg-[#0A2A43] text-white">
+              <Link href="/friends">View Feed</Link>
+            </Button>
+          </CardContent>
+        </Card>
 
-          <Card className="hover:shadow-lg transition">
-            <CardHeader>
-              <CardTitle>AI Trip Planner</CardTitle>
-            </CardHeader>
-            <CardContent className="text-muted-foreground">
-              Tell WANDR where you want to go — get instant itinerary suggestions.
-              <Button className="mt-4 w-full" asChild>
-                <Link href="/ai">Plan a Trip</Link>
-              </Button>
-            </CardContent>
-          </Card>
+        <Card className="bg-white/70 border border-white/40 rounded-2xl shadow-lg">
+          <CardHeader className="pb-1">
+            <CardTitle className="flex items-center gap-2 text-2xl font-extrabold text-[#0A2A43]">
+              <Music className="h-6 w-6 text-[#ffb88c]" /> Travel Group Chats
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="text-gray-700 font-medium">
+            Collaborate on itineraries with your friends in real time.
+            <Button className="mt-4 w-full py-6 text-lg font-bold rounded-xl bg-[#0A2A43] text-white">
+              <Link href="/groups">Open Chats</Link>
+            </Button>
+          </CardContent>
+        </Card>
 
-          <Card className="hover:shadow-lg transition">
-            <CardHeader>
-              <CardTitle>Friends Feed</CardTitle>
-            </CardHeader>
-            <CardContent className="text-muted-foreground">
-              See trips and adventures your friends are taking.
-              <Button className="mt-4 w-full" asChild>
-                <Link href="/friends">View Feed</Link>
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-lg transition md:col-span-3">
-            <CardHeader>
-              <CardTitle>Travel Group Chats</CardTitle>
-            </CardHeader>
-            <CardContent className="text-muted-foreground">
-              Collaborate on itineraries with your friends in real time.
-              <Button className="mt-4" asChild>
-                <a href="/groups">Open Chats</a>
-              </Button>
-            </CardContent>
-          </Card>
-
-        </div>
-      </main>
-    </div>
-  )
+      </div>
+    </main>
+  </div>
+);
 }
 
 // The `getServerSideProps` function is used to fetch the user data and on

@@ -16,7 +16,6 @@ import {
   index,
   pgTable,
   primaryKey,
-  serial,
   text,
   timestamp,
   uuid,
@@ -253,7 +252,7 @@ export const destinationsTable = pgTable("destinations", {
   id: uuid("id").defaultRandom().primaryKey(),
   name: text("name").notNull(),
   country: text("country").notNull(),
-  continent: text("continent").notNull(),
+  continent: text("continent"),
 });
 
 export const itineraryTable = pgTable("itineraries", {

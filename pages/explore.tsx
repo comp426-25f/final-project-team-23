@@ -15,7 +15,7 @@ export default function ExplorePage() {
 
   return (
     <div className="min-h-screen bg-muted/30">
-
+      
       <main className="mx-auto max-w-6xl p-10">
 
         <div className="flex items-center justify-between mb-8">

@@ -38,7 +38,7 @@ export default function PostCard({ user, post }: PostCardProps) {
   const { mutate: toggleLike } = api.posts.toggleLike.useMutation();
 
   return (
-    <div className="flex w-full flex-row gap-3 p-6">
+    <div className="w-fit h-fit flex flex-row gap-3 p-6 bg-white rounded-2xl shadow-md border border-gray-100">
       <Avatar className="mt-1">
         <AvatarImage
           src={

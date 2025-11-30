@@ -130,3 +130,12 @@
     scrollbar-width: none; /* Firefox */
   }
 }
+
+.horizon-bg {
+  background: linear-gradient(
+    to bottom,
+    #ffe3cc 0%,  
+    #fff5d1 35%, 
+    #9edbf9 60%
+  );
+}
