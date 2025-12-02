@@ -6,21 +6,59 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { BookOpen, Landmark, Music, Utensils, Map, Trees, PlaneTakeoff } from "lucide-react";
+import { BookOpen, Landmark, Music, Utensils, Map, Trees, PlaneTakeoff, Loader2Icon, Save } from "lucide-react";
 import { format } from "date-fns";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "@/components/dates";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
+
+export interface ParsedActivity {
+  time: string; 
+  name: string;
+  category: string;
+  description: string;
+  location: string;
+}
+
+export interface ParsedDay {
+  dayNumber: number;
+  notes: string;
+  activities: ParsedActivity[];
+}
 
 export default function TravelPlannerPage() {
   const [input, setInput] = useState("");
   const [stream, setStream] = useState("");
   const [enabled, setEnabled] = useState(false);
+
   const scrollRef = useRef<HTMLDivElement>(null);
+
   const [dateRange, setDateRange] = useState<DateRange | undefined>({
-    from: new Date(2025, 12, 18),
-    to: new Date(2025, 12, 29),});
+    from: new Date(2025, 11, 18),
+    to: new Date(2025, 11, 29),});
+
+  const [isSaving, setIsSaving] = useState(false);
 
   const [filters, setFilters] = useState<string[]>([]);
+  const { data: destinations, isLoading: destinationsLoading } = api.destinations.getAll.useQuery();
+
+  const [destinationId, setDestinationId] = useState<string>("");
+  const router = useRouter();
+  
+  const { data: profile } = api.profiles.getAuthedUserProfile.useQuery();
+
+  const { mutate: createItineraryMutation } =
+    api.itineraries.createFullItinerary.useMutation({
+      onSuccess: (data) => {
+        toast.success("Itinerary saved!");
+        router.push(`/itinerary/${data.itineraryId}`);
+      },
+      onError: () => toast.error("Could not save itinerary."),
+      onSettled: () => {
+        setIsSaving(false);
+    },
+    });
 
   const toggleFilter = (f: string) => {
     setFilters((prev) =>
@@ -41,7 +79,7 @@ export default function TravelPlannerPage() {
   };
 
   const { reset: resetSubscription } =
-    api.travel.generateItinerary.useSubscription(
+    api.itineraries.generateItinerary.useSubscription(
       { request: buildPrompt() },
       {
         enabled,
@@ -86,9 +124,71 @@ export default function TravelPlannerPage() {
     resetSubscription();
   };
 
+  function extractDayNumber(line: string) {
+    const match = line.match(/Day\s+(\d+)/);
+    return match ? Number(match[1]) : 0;
+  };
+
+  function convertTime(timeStr: string) {
+    const date = new Date();
+    return new Date(`${date.toDateString()} ${timeStr}`).toISOString();
+  };
+
+function parseItinerary(text: string) {
+    const days: ParsedDay[] = [];
+    const lines = text.split("\n");
+    let currentDay: ParsedDay | null = null;
+
+    for (const line of lines) {
+      if (line.startsWith("Day")) {
+        if (currentDay) days.push(currentDay);
+        currentDay = {
+          dayNumber: extractDayNumber(line),
+          notes: "",
+          activities: [],
+        };
+      } else if (line.match(/^\d{1,2}:\d{2}/)) {
+        const [time, name] = line.split("—");
+        currentDay?.activities.push({
+          time: convertTime(time),
+          name: name?.trim() ?? "",
+          category: "General",
+          description: "",
+          location: "",
+        });
+      }
+    }
+    if (currentDay) days.push(currentDay);
+    return days;
+  };
+
+const handleSaveItinerary = () => {
+    if (!profile) return toast.error("You must be logged in.");
+    if (!stream.trim()) return toast.error("Generate an itinerary first.");
+    if (!destinationId) return toast.error("Select a destination first.");
+
+    const days = parseItinerary(stream);
+    setIsSaving(true);
+
+    createItineraryMutation({
+      title: "My Trip Itinerary",
+      description: input,
+      content: stream,
+      destinationId,
+      startDate: dateRange?.from
+        ? dateRange.from.toISOString()
+        : new Date().toISOString(),
+
+      endDate: dateRange?.to
+        ? dateRange.to.toISOString()
+        : new Date().toISOString(),
+      days,
+    });
+  };
+
   return (
     <div className="min-h-screen relative horizon-bg">
-      <main className="mx-auto w-full max-w-6xl px-6 py-12">
+      <main className="mx-auto w-full max-w-7xl px-6 py-12">
         <div className="flex flex-col lg:flex-row gap-10 w-full items-start">
 
           <div className="w-fit lg:w-[420px] shrink-0 flex flex-col gap-6 bg-white/5 p-4 rounded-2xl">
@@ -106,8 +206,30 @@ export default function TravelPlannerPage() {
                 placeholder="Describe your trip..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                className="rounded-xl border border-gray-200 bg-white/70 shadow-sm h-[120px] w-[360px]"
+                className="rounded-xl border border-gray-200 bg-white/70 shadow-sm h-[90px] w-[360px]"
               />
+            </div>
+
+            <div className="space-y-1">
+                <label className="text-sm font-medium">Destination</label>
+
+                <Select
+                value={destinationId}
+                onValueChange={(val: string) => setDestinationId(val)}
+                disabled={destinationsLoading}
+                >
+                <SelectTrigger>
+                    <SelectValue placeholder="Select a destination" />
+                </SelectTrigger>
+
+                <SelectContent>
+                    {destinations?.map((dest) => (
+                    <SelectItem value={dest.id} key={dest.id}>
+                        {dest.name ? `${dest.name}, ${dest.country}` : dest.country}
+                    </SelectItem>
+                    ))}
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="flex flex-col gap-2 w-fit">
@@ -139,6 +261,7 @@ export default function TravelPlannerPage() {
             </div>
           </div>
 
+          <div className="flex flex-col gap-5 flex-1">
           <Card
             className="w-full max-w-3xl mx-auto rounded-2xl shadow-xl p-6 border border-white/30 bg-white/90 h-[330px] sm:h-[380px] md:h-[510px] lg:h-[80vh] overflow-y-auto"
             ref={scrollRef}
@@ -154,6 +277,23 @@ export default function TravelPlannerPage() {
             )}
           </Card>
 
+            <Button
+              disabled={isSaving || !stream}
+              onClick={handleSaveItinerary}
+              className="self-center w-fit px-6 py-5 rounded-xl text-lg font-bold bg-[#ffb88c] text-[#0A2A43] hover:bg-orange-300"
+            >
+              {isSaving ? (
+                <>
+                  <Loader2Icon className="animate-spin mr-2" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2" /> Save Itinerary
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </main>
     </div>

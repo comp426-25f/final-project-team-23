@@ -80,7 +80,7 @@ export const NewItinerary = z.object({
   description: z.string().optional(),
   content: z.string().optional(),
   destinationId: z.string().uuid(),
-  startDate: z.string(), // ISO dates from HTML inputs
+  startDate: z.string(),
   endDate: z.string(),
 });
 
@@ -97,7 +97,7 @@ export const NewItineraryDay = z.object({
 
 export const NewActivity = z.object({
   itineraryDayId: z.string().uuid(),
-  time: z.string(), // front end sends ISO datetime
+  time: z.string(),
   name: z.string(),
   category: z.string().optional(),
   description: z.string(),
@@ -110,7 +110,6 @@ export const NewDestination = z.object({
   continent: z.string(),
 });
 
-// is this needed?
 export const LikePostRequest = z.object({
   postId: z.number(),
   profileId: z.string().uuid(),
@@ -125,4 +124,29 @@ export const NewPost = z.object({
   content: z.string(),
   attachmentUrl: z.string().nullish(),
   destinationId: z.string().uuid().nullish(),
+});
+
+export const CreateFullItineraryInput = z.object({
+  title: z.string(),
+  description: z.string().optional(),
+  content: z.string().optional(),
+  destinationId: z.string().uuid(),
+  startDate: z.string(),
+  endDate: z.string(),
+
+  days: z.array(
+    z.object({
+      dayNumber: z.number().int().min(1),
+      notes: z.string().optional(),
+      activities: z.array(
+        z.object({
+          time: z.string(),
+          name: z.string(),
+          category: z.string().optional(),
+          description: z.string(),
+          location: z.string().optional(),
+        }),
+      ),
+    }),
+  ),
 });

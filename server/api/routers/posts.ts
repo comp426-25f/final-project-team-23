@@ -13,7 +13,7 @@ import {
   destinationsTable,
 } from "@/server/db/schema";
 import { db } from "@/server/db";
-import { eq, and, desc, inArray, sql } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 
 const getPost = publicProcedure

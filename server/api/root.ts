@@ -10,7 +10,7 @@
 import { createCallerFactory, createTRPCRouter } from "@/server/api/trpc";
 import { postsApiRouter } from "./routers/posts";
 import { profilesApiRouter } from "./routers/profiles";
-import { travelItineraryRouter } from "./routers/travelItinerary";
+import { travelItineraryRouter } from "./routers/itineraries";
 import { destinationsApiRouter } from "./routers/destinations";
 
 // [NOTE]
@@ -20,7 +20,7 @@ import { destinationsApiRouter } from "./routers/destinations";
 export const appRouter = createTRPCRouter({
   posts: postsApiRouter,
   profiles: profilesApiRouter,
-  travel: travelItineraryRouter,
+  itineraries: travelItineraryRouter,
   destinations: destinationsApiRouter,
 });
 

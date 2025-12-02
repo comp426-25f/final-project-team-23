@@ -143,7 +143,6 @@ const handleNewUser = protectedProcedure
   .input(NewUser)
   .mutation(async ({ ctx, input }) => {
     const { subject } = ctx;
-    const { name, handle } = input;
 
     await db.insert(profilesTable).values({
       id: subject.id,

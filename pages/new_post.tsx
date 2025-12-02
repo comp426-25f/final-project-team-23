@@ -61,7 +61,7 @@ export default function CreatePostPage({ user }: Props) {
       setSelectedFile(null);
       apiUtils.invalidate().then(() => {
         setIsPosting(false);
-        router.push("/"); // Go back to feed
+        router.push("/");
       });
     };
 
@@ -126,7 +126,6 @@ export default function CreatePostPage({ user }: Props) {
               />
             </div>
 
-            {/* Destination Selector */}
             <div className="space-y-1">
                 <label className="text-sm font-medium">Destination</label>
 
@@ -149,7 +148,6 @@ export default function CreatePostPage({ user }: Props) {
             </Select>
         </div>
 
-            {/* Hidden file input */}
             <Input
               className="hidden"
               type="file"
