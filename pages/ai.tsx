@@ -12,20 +12,7 @@ import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "@/components/dates";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
-
-export interface ParsedActivity {
-  time: string; 
-  name: string;
-  category: string;
-  description: string;
-  location: string;
-}
-
-export interface ParsedDay {
-  dayNumber: number;
-  notes: string;
-  activities: ParsedActivity[];
-}
+import { ParsedActivity, ParsedDay } from "@/server/api/routers/itineraries";
 
 export default function TravelPlannerPage() {
   const [input, setInput] = useState("");
@@ -75,7 +62,14 @@ export default function TravelPlannerPage() {
       ? `\nUser interests: ${filters.join(", ")}. Prioritize activities related to these interests.`
       : "";
     
-    return input + dates + interests;
+    const dest = destinations?.find((d) => d.id === destinationId);
+    const city = dest?.name ?? "Your Destination";
+
+    const location = destinationId != ""
+      ? `\nDestination: ${city}. Prioritize activities related to these interests.`
+      : "";
+    
+    return input + location + dates + interests;
   };
 
   const { reset: resetSubscription } =
@@ -124,43 +118,75 @@ export default function TravelPlannerPage() {
     resetSubscription();
   };
 
-  function extractDayNumber(line: string) {
-    const match = line.match(/Day\s+(\d+)/);
-    return match ? Number(match[1]) : 0;
-  };
-
   function convertTime(timeStr: string) {
     const date = new Date();
     return new Date(`${date.toDateString()} ${timeStr}`).toISOString();
   };
 
-function parseItinerary(text: string) {
-    const days: ParsedDay[] = [];
-    const lines = text.split("\n");
-    let currentDay: ParsedDay | null = null;
+function parseItinerary(text: string): ParsedDay[] {
+  const days: ParsedDay[] = [];
+  const lines = text.split("\n").map((l) => l.trim());
 
-    for (const line of lines) {
-      if (line.startsWith("Day")) {
-        if (currentDay) days.push(currentDay);
-        currentDay = {
-          dayNumber: extractDayNumber(line),
-          notes: "",
-          activities: [],
-        };
-      } else if (line.match(/^\d{1,2}:\d{2}/)) {
-        const [time, name] = line.split("—");
-        currentDay?.activities.push({
-          time: convertTime(time),
-          name: name?.trim() ?? "",
-          category: "General",
-          description: "",
-          location: "",
-        });
-      }
+  let currentDay: ParsedDay | null = null;
+  let currentActivity: ParsedActivity | null = null;
+
+  for (const line of lines) {
+    if (!line) continue;
+
+    const dayMatch = line.match(/^Day\s+(\d+)(?:\s*\((.*)\))?/i);
+    if (dayMatch) {
+      if (currentDay) days.push(currentDay);
+
+      const dayNumber = Number(dayMatch[1]);
+      const notes = dayMatch[2] ? dayMatch[2].trim() : "";
+
+      currentDay = {
+        dayNumber,
+        notes,
+        activities: [],
+      };
+      currentActivity = null;
+      continue;
     }
-    if (currentDay) days.push(currentDay);
-    return days;
-  };
+
+    const activityMatch = line.match(
+      /^(\d{1,2}:\d{2}(?:\s?(AM|PM))?)\s*[—–-]\s*(.+)$/
+    );
+
+    if (activityMatch && currentDay) {
+      const time = activityMatch[1].trim();
+      const name = activityMatch[3].trim();
+
+      currentActivity = {
+        time: convertTime(time),
+        name,
+        category: "General",
+        description: "",
+        location: "",
+      };
+
+      currentDay.activities.push(currentActivity);
+      continue;
+    }
+
+    if ((line.startsWith("•") || line.startsWith("-")) && currentActivity) {
+      currentActivity.description +=
+        (currentActivity.description ? "\n" : "") + line;
+      continue;
+    }
+  }
+
+  if (currentDay) days.push(currentDay);
+
+  return days;
+}
+
+
+function getTripLength(from: Date, to: Date): number {
+  const ms = to.getTime() - from.getTime();
+  return Math.max(1, Math.ceil(ms / (1000 * 60 * 60 * 24)));
+}
+
 
 const handleSaveItinerary = () => {
     if (!profile) return toast.error("You must be logged in.");
@@ -170,8 +196,24 @@ const handleSaveItinerary = () => {
     const days = parseItinerary(stream);
     setIsSaving(true);
 
+    let itineraryTitle = ""
+
+    const dest = destinations?.find((d) => d.id === destinationId);
+    const city = dest?.name ?? "Your Destination";
+
+    if (!dateRange || !dateRange.from || !dateRange.to){
+      itineraryTitle = `Trip to ${city}`
+    } else {
+      const numDays = getTripLength(dateRange.from, dateRange.to);
+      if (numDays > 1) {
+        itineraryTitle = `${numDays} Days in ${city}`
+      } else {
+        itineraryTitle = `1 Day in ${city}`
+      }
+    }
+
     createItineraryMutation({
-      title: "My Trip Itinerary",
+      title: itineraryTitle,
       description: input,
       content: stream,
       destinationId,
@@ -267,7 +309,7 @@ const handleSaveItinerary = () => {
             ref={scrollRef}
           >
             {stream ? (
-              <pre className="whitespace-pre-wrap text-[15px] leading-relaxed text-[#0A2A43]">
+              <pre className="whitespace-pre-wrap text-[15px] leading-relaxed text-[#0A2A43] font-sans">
                 {stream}
               </pre>
             ) : (

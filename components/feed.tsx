@@ -14,6 +14,7 @@ type PostFeedProps = {
   postsLoading: boolean;
   fetchNext: () => void;
 };
+
 export default function PostFeed({
   user,
   posts,

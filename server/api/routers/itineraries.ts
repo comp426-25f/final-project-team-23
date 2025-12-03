@@ -10,9 +10,32 @@ import {
   itineraryTable,
   itineraryDaysTable,
   activitiesTable,
+  destinationsTable,
+  profilesTable,
+  itineraryCollaboratorsTable,
 } from "@/server/db/schema";
 import { db } from "@/server/db";
-import { CreateFullItineraryInput } from "@/server/models/inputs";
+import {
+  CreateFullItineraryInput,
+  ItineraryIdentity,
+  PaginationParams,
+} from "@/server/models/inputs";
+import { Itinerary, ItineraryPreview } from "@/server/models/responses";
+import { eq, desc, inArray, sql } from "drizzle-orm";
+
+export interface ParsedActivity {
+  time: string;
+  name: string;
+  category: string;
+  description: string;
+  location: string;
+}
+
+export interface ParsedDay {
+  dayNumber: number;
+  notes: string;
+  activities: ParsedActivity[];
+}
 
 export const travelItineraryRouter = createTRPCRouter({
   generateItinerary: publicProcedure
@@ -74,6 +97,7 @@ Day 1 (Monday, July 14 — Tokyo)
 Continue for all days.
 
 Return ONLY the itinerary text — no commentary.
+Add emojis as you see fit to make the text look more fun and visually appealing.
 
 User request:
 ${request}
@@ -174,6 +198,7 @@ ${request}
         );
 
         if (activityRows.length > 0) {
+          console.log("🔥 ACTIVITY ROWS TO INSERT:", activityRows);
           await db.insert(activitiesTable).values(activityRows);
         }
 
@@ -185,6 +210,191 @@ ${request}
           message: "Error saving itinerary.",
         });
       }
+    }),
+
+  getExploreItineraries: protectedProcedure
+    .input(PaginationParams.optional())
+    .output(ItineraryPreview.array())
+    .query(async ({ input }) => {
+      const { cursor } = input ?? { cursor: 0 };
+
+      console.log("→ HIT getExploreItineraries");
+
+      const itineraries = await db
+        .select({
+          id: itineraryTable.id,
+          title: itineraryTable.title,
+          description: itineraryTable.description,
+          content: itineraryTable.content,
+
+          startDate: itineraryTable.startDate,
+          endDate: itineraryTable.endDate,
+          createdAt: itineraryTable.createdAt,
+
+          destination: sql`
+          CASE
+          WHEN ${destinationsTable.id} IS NOT NULL THEN
+          json_build_object(
+            'id', ${destinationsTable.id},
+            'name', ${destinationsTable.name},
+            'country', ${destinationsTable.country}, 
+            'continent', ${destinationsTable.continent}
+          )::json
+          ELSE NULL
+          END
+        `.as("destination"),
+
+          author: {
+            id: profilesTable.id,
+            displayName: profilesTable.displayName,
+            username: profilesTable.username,
+            avatarUrl: profilesTable.avatarUrl,
+          },
+        })
+        .from(itineraryTable)
+        .leftJoin(
+          destinationsTable,
+          eq(itineraryTable.destinationId, destinationsTable.id),
+        )
+        .leftJoin(profilesTable, eq(itineraryTable.authorId, profilesTable.id))
+        .orderBy(desc(itineraryTable.createdAt))
+        .limit(25)
+        .offset(cursor ?? 0)
+        .execute();
+
+      console.log("→ RETURNING", itineraries.length, "itineraries");
+
+      return ItineraryPreview.array().parse(itineraries);
+    }),
+
+  getItinerary: publicProcedure
+    .input(ItineraryIdentity)
+    .output(Itinerary)
+    .query(async ({ input }) => {
+      const { itineraryId } = input;
+
+      const [itinerary] = await db
+        .select({
+          id: itineraryTable.id,
+          title: itineraryTable.title,
+          description: itineraryTable.description,
+          content: itineraryTable.content,
+          startDate: itineraryTable.startDate,
+          endDate: itineraryTable.endDate,
+          createdAt: itineraryTable.createdAt,
+          destination: {
+            id: destinationsTable.id,
+            name: destinationsTable.name,
+            country: destinationsTable.country,
+            continent: destinationsTable.continent,
+          },
+          author: {
+            id: profilesTable.id,
+            displayName: profilesTable.displayName,
+            username: profilesTable.username,
+            avatarUrl: profilesTable.avatarUrl,
+          },
+        })
+        .from(itineraryTable)
+        .leftJoin(
+          destinationsTable,
+          eq(itineraryTable.destinationId, destinationsTable.id),
+        )
+        .leftJoin(profilesTable, eq(itineraryTable.authorId, profilesTable.id))
+        .where(eq(itineraryTable.id, itineraryId));
+
+      if (!itinerary) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Itinerary not found",
+        });
+      }
+
+      const collaborators = await db
+        .select()
+        .from(itineraryCollaboratorsTable)
+        .where(eq(itineraryCollaboratorsTable.itineraryId, itineraryId));
+
+      const days = await db
+        .select()
+        .from(itineraryDaysTable)
+        .where(eq(itineraryDaysTable.itineraryId, itineraryId));
+
+      const dayIds = days.map((d) => d.id);
+
+      const activities =
+        dayIds.length > 0
+          ? await db
+              .select()
+              .from(activitiesTable)
+              .where(inArray(activitiesTable.itineraryDayId, dayIds))
+          : [];
+
+      const dayMap = days.map((day) => ({
+        ...day,
+        activities: activities.filter((a) => a.itineraryDayId === day.id),
+      }));
+
+      return Itinerary.parse({
+        ...itinerary,
+        collaborators,
+        days: dayMap,
+      });
+    }),
+
+  getUserItineraries: protectedProcedure
+    .input(PaginationParams.optional())
+    .output(ItineraryPreview.array())
+    .query(async ({ ctx, input }) => {
+      const { subject } = ctx;
+      const { cursor } = input ?? { cursor: 0 };
+
+      console.log("→ HIT getUserItineraries");
+
+      const itineraries = await db
+        .select({
+          id: itineraryTable.id,
+          title: itineraryTable.title,
+          description: itineraryTable.description,
+          content: itineraryTable.content,
+
+          startDate: itineraryTable.startDate,
+          endDate: itineraryTable.endDate,
+          createdAt: itineraryTable.createdAt,
+
+          destination: sql`
+          CASE
+            WHEN ${destinationsTable.id} IS NOT NULL THEN
+              json_build_object(
+                'id', ${destinationsTable.id},
+                'name', ${destinationsTable.name},
+                'country', ${destinationsTable.country},
+                'continent', ${destinationsTable.continent}
+              )::json
+            ELSE NULL
+          END
+        `.as("destination"),
+
+          author: {
+            id: profilesTable.id,
+            displayName: profilesTable.displayName,
+            username: profilesTable.username,
+            avatarUrl: profilesTable.avatarUrl,
+          },
+        })
+        .from(itineraryTable)
+        .leftJoin(
+          destinationsTable,
+          eq(itineraryTable.destinationId, destinationsTable.id),
+        )
+        .leftJoin(profilesTable, eq(itineraryTable.authorId, profilesTable.id))
+        .where(eq(itineraryTable.authorId, subject.id))
+        .orderBy(desc(itineraryTable.createdAt))
+        .limit(25)
+        .offset(cursor ?? 0)
+        .execute();
+
+      return ItineraryPreview.array().parse(itineraries);
     }),
 });
 
