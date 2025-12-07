@@ -30,7 +30,6 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   LogOut,
-  MapPin,
   PlusCircle,
   Share,
   Users,
@@ -1360,7 +1359,7 @@ function GetActivities({ dayId }: { dayId: string }) {
                         })
                       : ""}
                   </p>
-                  <Badge className="rounded-full px-2">
+                  <Badge className="px-2 py-0.5 text-xs font-semibold rounded-full bg-[#ffb88c]/20 text-[#ffb88c] border border-[#ffb88c]/40 w-fit">
                     {activity.category}
                   </Badge>
                 </div>
@@ -1426,14 +1425,13 @@ function GetActivities({ dayId }: { dayId: string }) {
               </div>
               <h2 className="font-medium text-[#0A2A43]">{activity.name}</h2>
             </CardHeader>
-            <CardContent className="pt-0 pb-3">
+            <CardContent className="pt-0 pb-3 flex flex-col gap-3">
+              <div className="flex flex-row items-center">
+                <p className="text-sm text-gray-500">{activity.location}</p>
+              </div>
               <p className="text-sm text-gray-700 mb-1">
                 {activity.description}
               </p>
-              <div className="flex flex-row items-center">
-                <MapPin className="mr-1 w-4 h-4 text-muted-foreground" />
-                <p className="text-sm text-gray-500">{activity.location}</p>
-              </div>
             </CardContent>
           </Card>
         ))

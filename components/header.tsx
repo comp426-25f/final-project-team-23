@@ -62,7 +62,7 @@ export default function Header() {
             </NavigationMenuItem>
 
             <NavigationMenuItem>
-              <Link href="/groups" className="text-md font-medium hover:text-primary">
+              <Link href="/groupChats" className="text-md font-medium hover:text-primary">
                 Connect
               </Link>
             </NavigationMenuItem>
