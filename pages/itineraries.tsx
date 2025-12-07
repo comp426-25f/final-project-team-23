@@ -47,8 +47,8 @@ export default function ItineraryPage() {
     const [selectedTrip, setSelectedTrip] = useState<string | null>(null);
     const [openJoin, setOpenJoin] = useState(false);
     return (
-        <div className="min-h-screen bg-muted/30">
-            <main className="min-h-screen p-10">
+        <div className="min-h-screen relative horizon-bg">
+           <main className="mx-auto w-full max-w-6xl px-6 py-12 flex gap-6">
                 <div className="flex">
                     <Card className="self-start w-64 min-h-screen">
                         <CardHeader className="font-semibold self-center w-full">Your Trips</CardHeader>
