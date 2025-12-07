@@ -17,7 +17,10 @@ export default function Header() {
   const router = useRouter();
   const apiUtils = api.useUtils();
 
-  const { data } = api.profiles.getAuthedUserProfile.useQuery();
+  const { data: profile, isLoading } = api.profiles.getAuthedUserProfile.useQuery();
+
+  if (isLoading) return null;
+  if (!profile) return null;
 
   return (
     <header className="w-full border-b bg-white/70 backdrop-blur-md">
@@ -27,7 +30,6 @@ export default function Header() {
           <Link href="/" className="block w-fit text-4xl font-black text-[#0A2A43]">
             wandr<span className="text-[#ffb88c]">.</span>
           </Link>
-
         </div>
 
         <NavigationMenu>
@@ -69,24 +71,24 @@ export default function Header() {
             <Avatar className="mt-1">
               <AvatarImage
                 src={
-                  data?.avatarUrl
+                  profile?.avatarUrl
                     ? supabase.storage
-                      .from("avatars")
-                      .getPublicUrl(data.avatarUrl).data.publicUrl
+                        .from("avatars")
+                        .getPublicUrl(profile.avatarUrl).data.publicUrl
                     : undefined
                 }
               />
               <AvatarFallback>
-                {data?.displayName!.slice(0, 2).toUpperCase()}
+                {profile?.displayName?.slice(0, 2).toUpperCase()}
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>
+
           <DropdownMenuContent align="end">
-            <DropdownMenuItem
-              onClick={() => router.push(`/profile/${data?.id}`)}
-            >
+            <DropdownMenuItem onClick={() => router.push(`/profile/${profile?.id}`)}>
               <UserRound /> My Profile
             </DropdownMenuItem>
+
             <DropdownMenuItem
               onClick={async () => {
                 await supabase.auth.signOut();
@@ -98,7 +100,8 @@ export default function Header() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
       </div>
     </header>
-  )
-};
+  );
+}

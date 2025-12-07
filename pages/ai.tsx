@@ -192,8 +192,9 @@ function parseItinerary(text: string): ParsedDay[] {
 }
 
 function getTripLength(from: Date, to: Date): number {
-  const ms = to.getTime() - from.getTime();
-  return Math.max(1, Math.ceil(ms / (1000 * 60 * 60 * 24)));
+  const ONE_DAY = 1000 * 60 * 60 * 24;
+  const diff = Math.floor((to.getTime() - from.getTime()) / ONE_DAY);
+  return diff + 1;
 }
 
 const handleSaveItinerary = () => {
