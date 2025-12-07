@@ -417,11 +417,7 @@ function GetDays({
       await utils.trips.getDays.invalidate({ itineraryId });
     },
     onError: (error) => {
-      console.error("❌ failed to create day", {
-        message: error.message,
-        data: error.data,
-        shape: error.shape,
-      });
+      console.error("❌ failed to create day", error);
     },
   });
 
@@ -430,11 +426,7 @@ function GetDays({
       await utils.trips.getDays.invalidate({ itineraryId });
     },
     onError: (error) => {
-      console.error("❌ failed to delete day", {
-        message: error.message,
-        data: error.data,
-        shape: error.shape,
-      });
+      console.error("❌ failed to delete day", error);
     },
   });
 
@@ -445,11 +437,7 @@ function GetDays({
       setEditingDayId(null);
     },
     onError: (error) => {
-      console.error("❌ failed to edit day", {
-        message: error.message,
-        data: error.data,
-        shape: error.shape,
-      });
+      console.error("❌ failed to edit day", error);
     },
   });
 
@@ -459,11 +447,7 @@ function GetDays({
       onTripDeleted();
     },
     onError: (error) => {
-      console.error("❌ failed to delete trip", {
-        message: error.message,
-        data: error.data,
-        shape: error.shape,
-      });
+      console.error("❌ failed to delete trip", error);
     },
   });
 
@@ -474,11 +458,7 @@ function GetDays({
       setEditOpen(false);
     },
     onError: (error) => {
-      console.error("❌ failed to edit trip", {
-        message: error.message,
-        data: error.data,
-        shape: error.shape,
-      });
+      console.error("❌ failed to edit trip", error);
     },
   });
 
@@ -488,16 +468,13 @@ function GetDays({
       onTripDeleted();
     },
     onError: (error) => {
-      console.error("❌ failed to edit trip", {
-        message: error.message,
-        data: error.data,
-        shape: error.shape,
-      });
+      console.error("❌ failed to leave trip", error);
     },
   });
 
   const supabase = createSupabaseComponentClient();
 
+  // Realtime updates for itinerary + days
   useEffect(() => {
     type Activity = {
       id: string;
@@ -517,7 +494,7 @@ function GetDays({
     };
 
     const ch = supabase
-      .channel(`update-db: ${itineraryId}`)
+      .channel(`update-db:${itineraryId}`)
       .on(
         "postgres_changes",
         {
@@ -599,485 +576,36 @@ function GetDays({
     };
   }, [utils.trips.getDays, supabase, utils, itineraryId]);
 
-<<<<<<< HEAD
-                                <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                        <DropdownMenuItem
-                                            disabled={user?.id !== itinerary?.author.id}
-                                            className="text-destructive focus:text-destructive"
-                                            onSelect={(e) => e.preventDefault()}
-                                        >
-                                            Delete Trip
-                                            <DropdownMenuShortcut>
-                                                <Trash2 className="h-4 w-4" />
-                                            </DropdownMenuShortcut>
-                                        </DropdownMenuItem>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                            <AlertDialogTitle>Delete this Trip?</AlertDialogTitle>
-                                            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                            <AlertDialogAction
-                                                onClick={() => {
-                                                    deleteTrip.mutate({ itineraryId });
-                                                }}
-                                            >
-                                                Delete
-                                            </AlertDialogAction>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
-
-                                <AlertDialog>
-                                    <AlertDialogTrigger asChild>
-                                        <DropdownMenuItem
-                                            disabled={user?.id === itinerary?.author.id}
-                                            className="text-destructive focus:text-destructive"
-                                            onSelect={(e) => e.preventDefault()}
-                                        >
-                                            Leave Trip
-                                            <DropdownMenuShortcut>
-                                                <LogOut className="h-4 w-4" />
-                                            </DropdownMenuShortcut>
-                                        </DropdownMenuItem>
-                                    </AlertDialogTrigger>
-                                    <AlertDialogContent>
-                                        <AlertDialogHeader>
-                                            <AlertDialogTitle>Leave this Trip?</AlertDialogTitle>
-                                            <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
-                                        </AlertDialogHeader>
-                                        <AlertDialogFooter>
-                                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                            <AlertDialogAction
-                                                onClick={() => {
-                                                    leaveTrip.mutate({ itineraryId });
-                                                }}
-                                            >
-                                                Leave
-                                            </AlertDialogAction>
-                                        </AlertDialogFooter>
-                                    </AlertDialogContent>
-                                </AlertDialog>
-
-                            </DropdownMenuGroup>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-                <p className="pt-4 text-muted-foreground text-lg">
-                    {itinerary?.startDate &&
-                        format(
-                            new Date(itinerary.startDate.getTime() + itinerary.startDate.getTimezoneOffset() * 60000),
-                            "MMM d, yyyy"
-                        )
-                    }
-                    {" – "}
-                    {itinerary?.endDate &&
-                        format(
-                            new Date(itinerary.endDate.getTime() + itinerary.endDate.getTimezoneOffset() * 60000),
-                            "MMM d, yyyy"
-                        )
-                    }
-                </p>
-                <p className="pt-4 text-lg text-muted-foreground">{itinerary?.description}</p>
-            </div>
-            <div>
-                <Card className="mb-4 w-[600px]">
-                    <CardContent>
-                        <div className="flex flex-1 flex-row space-x-3 items-center">
-                            <Users color="gray" size={35} />
-                            <Dialog>
-                                <DialogTrigger>
-                                    <Button variant="outline">Collaborators</Button>
-                                </DialogTrigger>
-                                <DialogContent>
-                                    <DialogTitle className="text-center">Collaborators</DialogTitle>
-                                    <DialogDescription className="text-center mb-2">
-                                        People who have access to this trip
-                                    </DialogDescription>
-                                    <div className="space-y-2 overflow-y-auto">
-                                        {(collaborators).length === 0 ? (
-                                            <p className="text-center">No collaborators yet</p>
-                                        ) : (
-                                            (collaborators).map((user) => {
-                                                const isOnline = onlineUsers.includes(user.profileId);
-                                                return (
-                                                    <div key={user.profileId} className="flex items-center justify-between">
-                                                        <p className="text-sm">{user.profile?.displayName}</p>
-                                                        <Badge variant={isOnline ? "default" : "outline"}>
-                                                            {isOnline ? "Online" : "Offline"}
-                                                        </Badge>
-                                                    </div>
-                                                );
-                                            })
-                                        )}
-                                    </div>
-                                </DialogContent>
-                            </Dialog>
-                            <Badge variant="outline">{onlineUsers.length} Users Active</Badge>
-                            <div className="ml-auto">
-                                <Dialog>
-                                    <DialogTrigger>
-                                        <Button className="font-semibold"><Share />Share</Button>
-                                    </DialogTrigger>
-                                    <DialogContent>
-                                        <DialogTitle className="text-center">Join Code</DialogTitle>
-                                        <DialogDescription className="text-center">Share with your friends!</DialogDescription>
-                                        <p className="text-center font-bold">{itineraryId}</p>
-                                    </DialogContent>
-                                </Dialog>
-                            </div>
-
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-            <Dialog open={editOpen} onOpenChange={setEditOpen}>
-                <DialogContent className="min-w-3xl">
-                    <DialogTitle className="place-self-center">Edit Trip</DialogTitle>
-                    <div className="grid grid-cols-2 gap-4 py-4">
-                        <div>
-                            <Label className="py-2" htmlFor="edit-title">
-                                Trip Name
-                            </Label>
-                            <Input
-                                id="edit-title"
-                                className="w-[180px]"
-                                name="edit-title"
-                                placeholder="Enter your Trip Name"
-                                value={editTitle}
-                                onChange={(e) => setEditTitle(e.target.value)}
-                            />
-                        </div>
-                        <div>
-                            <Label className="py-2" htmlFor="edit-description">
-                                Trip Description
-                            </Label>
-                            <Input
-                                id="edit-description"
-                                className="w-[300px]"
-                                name="edit-description"
-                                placeholder="Provide a Quick Description of your Trip"
-                                value={editDescription}
-                                onChange={(e) => setEditDescription(e.target.value)}
-                            />
-                        </div>
-                        <div>
-                            <Label className="py-2" htmlFor="edit-destination">
-                                Destination
-                            </Label>
-                            <Select value={editDestinationId} onValueChange={(value) => setEditDestinationId(value)}>
-                                <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Select a destination" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Destinations</SelectLabel>
-                                        {destinations &&
-                                            destinations.map((destination) => (
-                                                <SelectItem key={destination.id} value={destination.id}>
-                                                    {destination.name}, {destination.country}
-                                                </SelectItem>
-                                            ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                        <div>
-                            <Label className="py-2" htmlFor="edit-dates">
-                                Select your Trip Dates
-                            </Label>
-                            <Popover>
-                                <PopoverTrigger>
-                                    <Button variant="outline" className="w-[300px]">
-                                        {editStartDate && editEndDate
-                                            ? `${editStartDate.toLocaleDateString()} - ${editEndDate.toLocaleDateString()}`
-                                            : "Select date range"}
-                                        <ChevronDownIcon className="place-self-end" />
-                                    </Button>
-                                </PopoverTrigger>
-                                <PopoverContent>
-                                    <DateRangePicker
-                                        dateRange={
-                                            editStartDate && editEndDate ? { from: editStartDate, to: editEndDate } : undefined
-                                        }
-                                        setDateRange={(range) => {
-                                            setEditStartDate(range?.from);
-                                            setEditEndDate(range?.to);
-                                        }}
-                                    />
-                                </PopoverContent>
-                            </Popover>
-                        </div>
-                    </div>
-                    <DialogFooter>
-                        <Button variant="outline" onClick={() => setEditOpen(false)}>
-                            Cancel
-                        </Button>
-                        <Button
-                            onClick={() => {
-                                if (!itinerary || !editStartDate || !editEndDate || !editDestinationId) return;
-                                editItineraryMutation.mutate({
-                                    id: itinerary.id,
-                                    title: editTitle,
-                                    description: editDescription || null,
-                                    content: itinerary.content,
-                                    destinationId: editDestinationId,
-                                    startDate: editStartDate,
-                                    endDate: editEndDate,
-                                    collaborators: itinerary.collaborators ?? [],
-                                    days: itinerary.days ?? [],
-                                    destination: itinerary.destination
-                                });
-                            }}
-                            disabled={!editTitle || !editStartDate || !editEndDate || !editDestinationId || !itinerary}
-                        >
-                            Save Changes
-                        </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-            <div>
-                {daysLoading ? (
-                    <p>Loading days...</p>
-                ) : (
-                    days?.map((day) => (
-                        <Card className="mb-2" key={day.id}>
-                            <CardHeader>
-                                <div className="flex flex-row justify-between">
-                                    <h2 className="font-bold">Day {day.dayNumber}</h2>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Ellipsis className="w-5 h-5 cursor-pointer" />
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem
-                                                onClick={() => {
-                                                    setEditingDayId(day.id);
-                                                    setEditDayNumber(day.dayNumber);
-                                                    setEditDayNotes(day.notes ?? "");
-                                                    setEditDayOpen(true);
-                                                }}
-                                            >
-                                                Edit
-                                                <DropdownMenuShortcut>
-                                                    <Pencil className="h-4 w-4" />
-                                                </DropdownMenuShortcut>
-                                            </DropdownMenuItem>
-                                            <AlertDialog>
-                                                <AlertDialogTrigger asChild>
-                                                    <DropdownMenuItem
-                                                        className="text-destructive focus:text-destructive"
-                                                        onSelect={(e) => e.preventDefault()}
-                                                    >
-                                                        Delete
-                                                        <DropdownMenuShortcut>
-                                                            <Trash2 className="h-4 w-4" />
-                                                        </DropdownMenuShortcut>
-                                                    </DropdownMenuItem>
-                                                </AlertDialogTrigger>
-                                                <AlertDialogContent>
-                                                    <AlertDialogHeader>
-                                                        <AlertDialogTitle>Delete this Day?</AlertDialogTitle>
-                                                        <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
-                                                    </AlertDialogHeader>
-                                                    <AlertDialogFooter>
-                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                        <AlertDialogAction
-                                                            onClick={() => {
-                                                                deleteDay.mutate({ itineraryDayId: day.id });
-                                                            }}
-                                                        >
-                                                            Delete
-                                                        </AlertDialogAction>
-                                                    </AlertDialogFooter>
-                                                </AlertDialogContent>
-                                            </AlertDialog>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
-                                <p className="text-sm font-medium text-gray-600">{day.notes}</p>
-                                <GetActivities dayId={day.id} />
-                            </CardHeader>
-                            <CardContent></CardContent>
-                        </Card>
-                    ))
-                )}
-                <Dialog open={editDayOpen} onOpenChange={setEditDayOpen}>
-                    <DialogContent>
-                        <DialogTitle className="text-center">Edit Day</DialogTitle>
-                        <div className="grid grid-cols-2">
-                            <div className="flex flex-col">
-                                <Label className="mb-2" htmlFor="edit-day-number">
-                                    Day Number
-                                </Label>
-                                <Select
-                                    value={editDayNumber?.toString()}
-                                    onValueChange={(value) => setEditDayNumber(value ? parseInt(value) : undefined)}
-                                >
-                                    <SelectTrigger className="w-[180px]">
-                                        <SelectValue placeholder="Select Day Number" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectLabel>Day Number</SelectLabel>
-                                            {numDays &&
-                                                Array.from({ length: numDays }, (_, i) => i + 1).map((dayNum) => (
-                                                    <SelectItem key={dayNum} value={dayNum.toString()}>
-                                                        {dayNum}
-                                                    </SelectItem>
-                                                ))}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="flex flex-col">
-                                <Label className="mb-2" htmlFor="edit-notes">
-                                    Notes
-                                </Label>
-                                <Input
-                                    id="edit-notes"
-                                    className="w-[180px]"
-                                    name="edit-notes"
-                                    placeholder="Enter your Notes"
-                                    value={editDayNotes}
-                                    onChange={(e) => setEditDayNotes(e.target.value)}
-                                ></Input>
-                            </div>
-                        </div>
-                        <DialogFooter>
-                            <DialogClose>
-                                <Button
-                                    variant="secondary"
-                                    onClick={() => {
-                                        setEditDayOpen(false);
-                                    }}
-                                >
-                                    Cancel
-                                </Button>
-                            </DialogClose>
-                            <Button
-                                variant="outline"
-                                disabled={!editDayNumber || !editingDayId}
-                                onClick={() => {
-                                    if (!editDayNumber || !editingDayId) return;
-                                    const originalDay = days?.find((d) => d.id === editingDayId);
-                                    if (!originalDay) return;
-                                    editDayMutation.mutate({
-                                        id: originalDay.id,
-                                        dayNumber: editDayNumber,
-                                        notes: editDayNotes,
-                                        activities: originalDay.activities ?? [],
-                                    });
-                                }}
-                            >
-                                Save
-                            </Button>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button variant="outline" className="w-[600px]">
-                            Add Day
-                            <PlusCircle className="ml-1" />
-                        </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                        <DialogTitle className="text-center">Create Day</DialogTitle>
-                        <div className="grid grid-cols-2">
-                            <div className="flex flex-col">
-                                <Label className="mb-2" htmlFor="Number">
-                                    Day Number
-                                </Label>
-                                <Select
-                                    value={dayNumber?.toString()}
-                                    onValueChange={(value) => setDayNumber(value ? parseInt(value) : undefined)}
-                                >
-                                    <SelectTrigger className="w-[180px]">
-                                        <SelectValue placeholder="Select Day Number" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectGroup>
-                                            <SelectLabel>Day Number</SelectLabel>
-                                            {numDays &&
-                                                Array.from({ length: numDays }, (_, i) => i + 1).map((dayNum) => (
-                                                    <SelectItem key={dayNum} value={dayNum.toString()}>
-                                                        {dayNum}
-                                                    </SelectItem>
-                                                ))}
-                                        </SelectGroup>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="flex flex-col">
-                                <Label className="mb-2" htmlFor="notes">
-                                    Notes
-                                </Label>
-                                <Input
-                                    id="notes"
-                                    className="w-[180px]"
-                                    name="notes"
-                                    placeholder="Enter your Notes"
-                                    value={notes}
-                                    onChange={(e) => setNotes(e.target.value)}
-                                ></Input>
-                            </div>
-                        </div>
-                        <DialogFooter>
-                            <DialogClose>
-                                <Button variant="secondary">Cancel</Button>
-                            </DialogClose>
-                            <DialogClose>
-                                <Button
-                                    variant="outline"
-                                    disabled={!dayNumber}
-                                    onClick={() => {
-                                        if (dayNumber) {
-                                            createDay.mutate({ itineraryId, dayNumber, notes });
-                                        }
-                                    }}
-                                >
-                                    Create
-                                </Button>
-                            </DialogClose>
-                        </DialogFooter>
-                    </DialogContent>
-                </Dialog>
-            </div>
-        </div >
-=======
+  // Presence / online collaborators
   const [onlineUsers, setOnlineUsers] = useState<string[]>([]);
+
   const onUserJoin = (joiningUserIds: string[]) => {
     setOnlineUsers((prevUsers) => [...prevUsers, ...joiningUserIds]);
   };
+
   const onUserLeave = (leavingUserIds: string[]) => {
     setOnlineUsers((prevUsers) =>
-      prevUsers.filter((user) => !leavingUserIds.includes(user)),
->>>>>>> ee12730 (ui + dropdown)
+      prevUsers.filter((userId) => !leavingUserIds.includes(userId)),
     );
   };
 
   useEffect(() => {
     if (!user?.id) return;
     type PresenceEntry = { id?: string; userId?: string };
+
     const ch = supabase
-      .channel("presence", { config: { presence: { key: user?.id } } })
+      .channel("presence", { config: { presence: { key: user.id } } })
       .on("presence", { event: "join" }, (payload: { newPresences?: PresenceEntry[] }) => {
-        const { newPresences } = payload;
-        const ids = (newPresences ?? []).map((p: PresenceEntry) => p.userId ?? p.id);
+        const ids = (payload.newPresences ?? []).map((p) => p.userId ?? p.id);
         onUserJoin(ids.filter(Boolean) as string[]);
       })
       .on("presence", { event: "leave" }, (payload: { leftPresences?: PresenceEntry[] }) => {
-        const { leftPresences } = payload;
-        const ids = (leftPresences ?? []).map((p: PresenceEntry) => p.userId ?? p.id);
+        const ids = (payload.leftPresences ?? []).map((p) => p.userId ?? p.id);
         onUserLeave(ids.filter(Boolean) as string[]);
       })
       .subscribe(async (status) => {
         if (status === "SUBSCRIBED") {
-          await ch.track({ userId: user?.id });
+          await ch.track({ userId: user.id });
         }
       });
 
@@ -1088,12 +616,13 @@ function GetDays({
 
   return (
     <div className="flex flex-col items-center gap-6">
-      
+     
       <div className="text-center max-w-2xl">
         <div className="flex flex-row items-center justify-center gap-2">
           <h1 className="text-3xl md:text-4xl font-black text-[#0A2A43] flex-1">
             {itinerary?.title}
           </h1>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="p-1 rounded-full hover:bg-slate-100">
@@ -1224,12 +753,13 @@ function GetDays({
               "MMM d, yyyy",
             )}
         </p>
+
         <p className="pt-3 text-base text-gray-700">
           {itinerary?.description}
         </p>
       </div>
 
-   
+      
       <Card className="w-full max-w-3xl bg-white/90 border border-slate-100 rounded-2xl shadow-md">
         <CardContent className="py-4">
           <div className="flex flex-row items-center gap-3">
@@ -1269,9 +799,11 @@ function GetDays({
                 </div>
               </DialogContent>
             </Dialog>
+
             <Badge variant="outline" className="rounded-full">
               {onlineUsers.length} Active
             </Badge>
+
             <div className="ml-auto">
               <Dialog>
                 <DialogTrigger asChild>
@@ -1295,7 +827,7 @@ function GetDays({
         </CardContent>
       </Card>
 
-     
+      
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogContent className="max-w-3xl">
           <DialogTitle className="text-center text-xl font-semibold text-[#0A2A43]">
@@ -1481,7 +1013,9 @@ function GetDays({
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
-                <p className="text-sm font-medium text-gray-600 mt-1">{day.notes}</p>
+                <p className="text-sm font-medium text-gray-600 mt-1">
+                  {day.notes}
+                </p>
                 <GetActivities dayId={day.id} />
               </CardHeader>
               <CardContent />
@@ -1489,7 +1023,7 @@ function GetDays({
           ))
         )}
 
-    
+        
         <Dialog open={editDayOpen} onOpenChange={setEditDayOpen}>
           <DialogContent className="max-w-md">
             <DialogTitle className="text-center">Edit Day</DialogTitle>
@@ -1565,7 +1099,6 @@ function GetDays({
           </DialogContent>
         </Dialog>
 
- 
         <div className="flex justify-center mt-4">
           <Dialog>
             <DialogTrigger asChild>
@@ -1663,6 +1196,7 @@ function GetActivities({ dayId }: { dayId: string }) {
   ];
 
   const utils = api.useUtils();
+
   const createActivity = api.trips.createActivity.useMutation({
     onSuccess: async () => {
       await utils.trips.getActivities.invalidate({ itineraryDayId: dayId });
@@ -1673,11 +1207,7 @@ function GetActivities({ dayId }: { dayId: string }) {
       setCategory("");
     },
     onError: (error) => {
-      console.error("❌ failed to create activity", {
-        message: error.message,
-        data: error.data,
-        shape: error.shape,
-      });
+      console.error("❌ failed to create activity", error);
     },
   });
 
@@ -1686,11 +1216,7 @@ function GetActivities({ dayId }: { dayId: string }) {
       await utils.trips.getActivities.invalidate({ itineraryDayId: dayId });
     },
     onError: (error) => {
-      console.error("❌ failed to delete activity", {
-        message: error.message,
-        data: error.data,
-        shape: error.shape,
-      });
+      console.error("❌ failed to delete activity", error);
     },
   });
 
@@ -1701,11 +1227,7 @@ function GetActivities({ dayId }: { dayId: string }) {
       setEditingActivityId(null);
     },
     onError: (error) => {
-      console.error("❌ failed to edit activity", {
-        message: error.message,
-        data: error.data,
-        shape: error.shape,
-      });
+      console.error("❌ failed to edit activity", error);
     },
   });
 
@@ -1812,210 +1334,6 @@ function GetActivities({ dayId }: { dayId: string }) {
       )
       .subscribe();
 
-<<<<<<< HEAD
-    return (
-        <div>
-            {activitiesLoading ? (
-                <p>Loading activities...</p>
-            ) : activities && activities.length > 0 ? (
-                activities.map((activity) => (
-                    <Card className="mb-2 bg-muted/80 space-y-2" key={activity.id}>
-                        <CardHeader className="-my-1">
-                            <div className="flex justify-between -mb-1 items-center">
-                                <div className="flex flex-row">
-                                    <p className="text-sm font-medium text-gray-600 mr-4">
-                                        {activity.time
-                                            ? new Date(activity.time).toLocaleTimeString("en-US", {
-                                                hour: "2-digit",
-                                                minute: "2-digit",
-                                            })
-                                            : ""}
-                                    </p>
-                                    <Badge color="black" className="pl-2 place-self-start">
-                                        {activity.category}
-                                    </Badge>
-                                </div>
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Ellipsis className="w-5 h-5 cursor-pointer" />
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                        <DropdownMenuItem
-                                            onClick={() => {
-                                                setEditingActivityId(activity.id);
-                                                setEditName(activity.name);
-                                                setEditDescription(activity.description);
-                                                setEditLocation(activity.location ?? "");
-                                                const t = new Date(activity.time);
-                                                const h = t.getHours().toString().padStart(2, "0");
-                                                const m = t.getMinutes().toString().padStart(2, "0");
-                                                setEditTime(`${h}:${m}`);
-                                                setEditCategory(activity.category ?? "");
-                                                setEditActivityOpen(true);
-                                            }}
-                                        >
-                                            Edit
-                                            <DropdownMenuShortcut>
-                                                <Pencil className="h-4 w-4" />
-                                            </DropdownMenuShortcut>
-                                        </DropdownMenuItem>
-                                        <AlertDialog>
-                                            <AlertDialogTrigger asChild>
-                                                <DropdownMenuItem
-                                                    className="text-destructive focus:text-destructive"
-                                                    onSelect={(e) => e.preventDefault()}
-                                                >
-                                                    Delete
-                                                    <DropdownMenuShortcut>
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </DropdownMenuShortcut>
-                                                </DropdownMenuItem>
-                                            </AlertDialogTrigger>
-                                            <AlertDialogContent>
-                                                <AlertDialogHeader>
-                                                    <AlertDialogTitle>Delete this Activity?</AlertDialogTitle>
-                                                    <AlertDialogDescription>This action cannot be undone</AlertDialogDescription>
-                                                </AlertDialogHeader>
-                                                <AlertDialogFooter>
-                                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                                    <AlertDialogAction
-                                                        onClick={() => {
-                                                            deleteActivity.mutate({ activityId: activity.id });
-                                                        }}
-                                                    >
-                                                        Delete
-                                                    </AlertDialogAction>
-                                                </AlertDialogFooter>
-                                            </AlertDialogContent>
-                                        </AlertDialog>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </div>
-                            <h2 className="font-medium">{activity.name}</h2>
-                        </CardHeader>
-                        <CardContent className="-my-3">
-                            <div className="">
-                                <p className="text-sm text-gray-700">{activity.description}</p>
-                                <div className="flex flex-row items-center">
-                                    <MapPin color="gray" className="mr-1 w-4 h-4 font-light" />
-                                    <p className="text-sm text-gray-500">{activity.location} </p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ))
-            ) : (
-                <p className="text-center py-2 text-muted-foreground">No Activities Yet</p>
-            )}
-            <Dialog open={editActivityOpen} onOpenChange={setEditActivityOpen}>
-                <DialogContent className="w-[500px]">
-                    <DialogTitle className="text-center">Edit Activity</DialogTitle>
-                    <div className="grid grid-cols-2">
-                        <div className="mt-2">
-                            <Label className="mb-2" htmlFor="edit-name">
-                                Activity Name
-                            </Label>
-                            <Input
-                                id="edit-name"
-                                className="w-[180px]"
-                                name="edit-name"
-                                placeholder="Enter Activity Name"
-                                value={editName}
-                                onChange={(e) => setEditName(e.target.value)}
-                            ></Input>
-                        </div>
-                        <div className="mt-2">
-                            <Label className="mb-2" htmlFor="edit-location">
-                                Activity Location
-                            </Label>
-                            <Input
-                                id="edit-location"
-                                className="w-[220px]"
-                                name="edit-location"
-                                placeholder="Enter Activity Location"
-                                value={editLocation}
-                                onChange={(e) => setEditLocation(e.target.value)}
-                            ></Input>
-                        </div>
-                        <div className="mt-2">
-                            <Label className="mb-2" htmlFor="edit-time">
-                                Activity Time
-                            </Label>
-                            <Input
-                                id="edit-time"
-                                type="time"
-                                className="w-[180px]"
-                                name="edit-time"
-                                value={editTime}
-                                onChange={(e) => setEditTime(e.target.value)}
-                            ></Input>
-                        </div>
-                        <div className="mt-2">
-                            <Label className="mb-2" htmlFor="edit-category">
-                                Activity Category
-                            </Label>
-                            <Select value={editCategory} onValueChange={setEditCategory}>
-                                <SelectTrigger className="w-[220px]">
-                                    <SelectValue placeholder="Select Category" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectLabel>Categories</SelectLabel>
-                                        {categories.map((category) => (
-                                            <SelectItem key={category} value={category}>
-                                                {category}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
-                    <div className="mt-2">
-                        <Label className="mb-2" htmlFor="edit-description">
-                            Activity Description
-                        </Label>
-                        <Input
-                            id="edit-description"
-                            className="w-[445px]"
-                            name="edit-description"
-                            placeholder="Enter Activity Description"
-                            value={editDescription}
-                            onChange={(e) => setEditDescription(e.target.value)}
-                        ></Input>
-                    </div>
-                    <DialogFooter>
-                        <DialogClose>
-                            <Button
-                                variant="secondary"
-                                onClick={() => {
-                                    setEditActivityOpen(false);
-                                }}
-                            >
-                                Cancel
-                            </Button>
-                        </DialogClose>
-                        <Button
-                            variant="outline"
-                            disabled={!editingActivityId || !editName || !editDescription || !editTime || !editCategory}
-                            onClick={() => {
-                                if (!editingActivityId) return;
-                                const original = activities?.find((a) => a.id === editingActivityId);
-                                if (!original) return;
-                                const [hours, minutes] = editTime.split(":");
-                                const updatedTime = new Date(original.time);
-                                updatedTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
-                                editActivityMutation.mutate({
-                                    id: original.id,
-                                    itineraryDayId: original.itineraryDayId,
-                                    name: editName,
-                                    description: editDescription,
-                                    location: editLocation || null,
-                                    category: editCategory || null,
-                                    time: updatedTime,
-                                });
-                            }}
-=======
     return () => {
       supabase.removeChannel(ch);
     };
@@ -2077,7 +1395,6 @@ function GetActivities({ dayId }: { dayId: string }) {
                         <DropdownMenuItem
                           className="text-destructive focus:text-destructive"
                           onSelect={(e) => e.preventDefault()}
->>>>>>> ee12730 (ui + dropdown)
                         >
                           Delete
                           <DropdownMenuShortcut>
@@ -2126,7 +1443,7 @@ function GetActivities({ dayId }: { dayId: string }) {
         </p>
       )}
 
-  
+      
       <Dialog open={editActivityOpen} onOpenChange={setEditActivityOpen}>
         <DialogContent className="w-[500px] max-w-full">
           <DialogTitle className="text-center">Edit Activity</DialogTitle>
@@ -2244,7 +1561,7 @@ function GetActivities({ dayId }: { dayId: string }) {
         </DialogContent>
       </Dialog>
 
-
+      
       <div className="flex justify-center mt-3">
         <Dialog>
           <DialogTrigger asChild>
@@ -2345,4 +1662,5 @@ function GetActivities({ dayId }: { dayId: string }) {
     </div>
   );
 }
+
 
