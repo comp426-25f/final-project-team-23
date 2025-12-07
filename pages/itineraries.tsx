@@ -39,6 +39,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { createSupabaseComponentClient } from "@/utils/supabase/clients/component";
+import { format } from "date-fns";
 
 export default function ItineraryPage() {
     const { data: trips, isLoading: tripsLoading } = api.trips.getItineraries.useQuery();
@@ -545,8 +546,8 @@ function GetDays({ itineraryId, onTripDeleted }: { itineraryId: string, onTripDe
                                         setEditTitle(itinerary?.title ?? "");
                                         setEditDescription(itinerary?.description ?? "");
                                         setEditDestinationId(itinerary?.destinationId ?? undefined);
-                                        setEditStartDate(itinerary?.startDate ? new Date(itinerary.startDate) : undefined);
-                                        setEditEndDate(itinerary?.endDate ? new Date(itinerary.endDate) : undefined);
+                                        setEditStartDate(itinerary?.startDate ? new Date(itinerary.startDate.getTime() + itinerary.startDate.getTimezoneOffset() * 60000) : undefined);
+                                        setEditEndDate(itinerary?.endDate ? new Date(itinerary.endDate.getTime() + itinerary.endDate.getTimezoneOffset() * 60000) : undefined);
                                         setEditOpen(true);
                                     }}
                                 >
@@ -623,8 +624,19 @@ function GetDays({ itineraryId, onTripDeleted }: { itineraryId: string, onTripDe
                     </DropdownMenu>
                 </div>
                 <p className="pt-4 text-muted-foreground text-lg">
-                    {itinerary?.startDate && new Date(itinerary.startDate).toLocaleDateString()} -{" "}
-                    {itinerary?.endDate && new Date(itinerary.endDate).toLocaleDateString()}
+                    {itinerary?.startDate &&
+    format(
+      new Date(itinerary.startDate.getTime() + itinerary.startDate.getTimezoneOffset() * 60000),
+      "MMM d, yyyy"
+    )
+  }
+  {" – "}
+  {itinerary?.endDate &&
+    format(
+      new Date(itinerary.endDate.getTime() + itinerary.endDate.getTimezoneOffset() * 60000),
+      "MMM d, yyyy"
+    )
+  }
                 </p>
                 <p className="pt-4 text-lg text-muted-foreground">{itinerary?.description}</p>
             </div>
@@ -774,6 +786,7 @@ function GetDays({ itineraryId, onTripDeleted }: { itineraryId: string, onTripDe
                                     endDate: editEndDate,
                                     collaborators: itinerary.collaborators ?? [],
                                     days: itinerary.days ?? [],
+                                    destination: itinerary.destination
                                 });
                             }}
                             disabled={!editTitle || !editStartDate || !editEndDate || !editDestinationId || !itinerary}

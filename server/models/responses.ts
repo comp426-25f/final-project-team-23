@@ -123,6 +123,7 @@ export const Itinerary = z.object({
   collaborators: ItineraryCollaborator.array(),
   days: ItineraryDay.array(),
   author: Profile,
+  destination: Destination.nullable(),
 });
 
 export const EditedItinerary = Itinerary.omit({

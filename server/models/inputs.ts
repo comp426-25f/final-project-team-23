@@ -131,8 +131,8 @@ export const CreateFullItineraryInput = z.object({
   description: z.string().optional(),
   content: z.string().optional(),
   destinationId: z.string().uuid(),
-  startDate: z.string(),
-  endDate: z.string(),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date(),
 
   days: z.array(
     z.object({

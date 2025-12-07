@@ -19,7 +19,7 @@ export default function PostPage({ user }: PostPageProps) {
     <div className="flex w-full flex-row justify-center px-3">
       <div className="mt-4 mb-12 w-full md:w-[600px]">
         <div className="pb-3">
-          <Button variant="ghost" onClick={() => router.push("/")}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft /> Back to Feed
           </Button>
         </div>

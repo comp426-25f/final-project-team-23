@@ -47,57 +47,39 @@ export const travelItineraryRouter = createTRPCRouter({
 You are an AI travel itinerary generator.
 Produce a complete day-by-day, hour-by-hour itinerary.
 
-For EACH line-item activity (e.g., “Breakfast at ___”, “Visit ___”, “Explore ___”), 
-add 2–4 short bullet points immediately beneath it with helpful details such as:
-- What to expect
-- Tips or recommendations
-- Transit notes or time estimates
-- Cost ranges (if relevant)
-- Why it's worth visiting
+Every activity MUST follow this required structure:
 
-Use THIS exact format:
+TIME — ACTIVITY NAME
+Category: <one of Food, Culture, History, Nightlife, Nature, Adventure, General>
+Location: 📍 <location name>
+  • bullet point detail
+  • bullet point detail
+  • bullet point detail
+
+Example:
 
 Day 1 (Monday, July 14 — Tokyo)
-8:00 AM — Breakfast at Tsukiji Outer Market
-  • Famous for fresh sushi and street snacks
-  • Try tamagoyaki at a local vendor
+8:00 AM — Breakfast at Tsukiji Market
+Category: Food
+Location: 📍 Tsukiji Outer Market
+  • Famous for fresh sushi stalls
+  • Try grilled scallops
   • Arrive early to avoid crowds
 
 9:30 AM — Visit Hamarikyu Gardens
-  • Traditional Japanese landscape garden
+Category: Nature
+Location: 📍 Chuo City
+  • Traditional landscape garden
   • Beautiful teahouse on the pond
-  • Great photography spots
 
-11:00 AM — Subway to Shibuya (20 min)
-  • Take the Oedo Line
-  • Shibuya Station is large — follow signs for Hachiko Exit
-
-11:30 AM — Explore Shibuya Crossing
-  • Iconic pedestrian scramble
-  • Best overhead view from Starbucks 2F
-  • Shops and cafes nearby
-
-1:00 PM — Lunch
-  • Suggest a local cuisine option
-  • Include one recommended restaurant
-
-2:00 PM — Activity
-  • Provide specific landmark or experience
-  • Include relevant tips
-
-4:00 PM — Rest
-  • Hotel or quiet café recommendation
-
-6:00 PM — Dinner
-  • Suggest cuisine + one recommended spot
-
-8:00 PM — Optional activity
-  • Relaxed evening idea (bar, walk, viewpoint)
-
-Continue for all days.
+Structure rules:
+- "Category:" MUST be on its own line.
+- "Location:" MUST be on its own line and begin with the 📍 emoji.
+- Bullet points MUST be indented under each activity.
+- Continue this format for all days.
 
 Return ONLY the itinerary text — no commentary.
-Add emojis as you see fit to make the text look more fun and visually appealing.
+Add emojis to make the itinerary visually appealing.
 
 User request:
 ${request}
@@ -155,13 +137,14 @@ ${request}
           .insert(itineraryTable)
           .values({
             title,
-            description,
-            content,
+            description: description ?? null,
+            content: content ?? null,
             destinationId,
-            startDate,
-            endDate,
+            startDate: startDate.toISOString().split("T")[0], // <-- fix
+            endDate: endDate.toISOString().split("T")[0], // <-- fix
             authorId: subject.id,
           })
+
           .returning();
 
         if (!itinerary)
@@ -282,6 +265,7 @@ ${request}
           startDate: itineraryTable.startDate,
           endDate: itineraryTable.endDate,
           createdAt: itineraryTable.createdAt,
+          destinationId: itineraryTable.destinationId,
           destination: {
             id: destinationsTable.id,
             name: destinationsTable.name,
@@ -310,13 +294,13 @@ ${request}
         });
       }
 
-      const collaborators = await db
-        .select()
-        .from(itineraryCollaboratorsTable)
-        .where(eq(itineraryCollaboratorsTable.itineraryId, itineraryId));
-
       const days = await db
-        .select()
+        .select({
+          id: itineraryDaysTable.id,
+          itineraryId: itineraryDaysTable.itineraryId,
+          dayNumber: itineraryDaysTable.dayNumber,
+          notes: itineraryDaysTable.notes,
+        })
         .from(itineraryDaysTable)
         .where(eq(itineraryDaysTable.itineraryId, itineraryId));
 
@@ -325,10 +309,36 @@ ${request}
       const activities =
         dayIds.length > 0
           ? await db
-              .select()
+              .select({
+                id: activitiesTable.id,
+                itineraryDayId: activitiesTable.itineraryDayId,
+                time: activitiesTable.time,
+                name: activitiesTable.name,
+                category: activitiesTable.category,
+                location: activitiesTable.location,
+                description: activitiesTable.description,
+              })
               .from(activitiesTable)
               .where(inArray(activitiesTable.itineraryDayId, dayIds))
           : [];
+
+      const collaborators = await db
+        .select({
+          itineraryId: itineraryCollaboratorsTable.itineraryId,
+          profileId: itineraryCollaboratorsTable.profileId,
+          profile: {
+            id: profilesTable.id,
+            displayName: profilesTable.displayName,
+            username: profilesTable.username,
+            avatarUrl: profilesTable.avatarUrl,
+          },
+        })
+        .from(itineraryCollaboratorsTable)
+        .leftJoin(
+          profilesTable,
+          eq(itineraryCollaboratorsTable.profileId, profilesTable.id),
+        )
+        .where(eq(itineraryCollaboratorsTable.itineraryId, itineraryId));
 
       const dayMap = days.map((day) => ({
         ...day,
@@ -343,13 +353,14 @@ ${request}
     }),
 
   getUserItineraries: protectedProcedure
-    .input(PaginationParams.optional())
+    .input(
+      PaginationParams.extend({
+        userId: z.string().uuid(),
+      }),
+    )
     .output(ItineraryPreview.array())
-    .query(async ({ ctx, input }) => {
-      const { subject } = ctx;
+    .query(async ({ input }) => {
       const { cursor } = input ?? { cursor: 0 };
-
-      console.log("→ HIT getUserItineraries");
 
       const itineraries = await db
         .select({
@@ -388,7 +399,7 @@ ${request}
           eq(itineraryTable.destinationId, destinationsTable.id),
         )
         .leftJoin(profilesTable, eq(itineraryTable.authorId, profilesTable.id))
-        .where(eq(itineraryTable.authorId, subject.id))
+        .where(eq(itineraryTable.authorId, input.userId))
         .orderBy(desc(itineraryTable.createdAt))
         .limit(25)
         .offset(cursor ?? 0)

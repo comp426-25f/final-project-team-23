@@ -139,3 +139,22 @@
     #9edbf9 60%
   );
 }
+
+
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Kalam:wght@300;400;700&display=swap');
+
+:root {
+  --journal-font: 'Kalam', cursive;
+  --paper-bg: #FAF8F0;
+}
+
+.polaroid {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+}
+
+.tape {
+  background: rgba(255, 184, 140, 0.35);
+  backdrop-filter: blur(2px);
+}
+
+

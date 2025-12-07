@@ -13,7 +13,6 @@ type ItineraryPageProps = {
   user: User;
 };
 
-// export default function ItineraryPage({ user }: ItineraryPageProps) {
 export default function ItineraryPage({ }: ItineraryPageProps) {
   const router = useRouter();
   const itineraryId = router.query.id as string;
@@ -30,44 +29,40 @@ export default function ItineraryPage({ }: ItineraryPageProps) {
   }
 
   const start = new Date(itinerary.startDate);
+  const localStart = new Date(start.getTime() + start.getTimezoneOffset() * 60000);
+
   const end = new Date(itinerary.endDate);
+  const localEnd = new Date(end.getTime() + end.getTimezoneOffset() * 60000);
 
   return (
     <div className="flex w-full flex-row justify-center px-3">
       <div className="mt-4 mb-12 w-full md:w-[700px]">
 
-        {/* Back Button */}
         <div className="pb-3">
-          <Button variant="ghost" onClick={() => router.push("/")}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="mr-1" /> Back to Feed
           </Button>
         </div>
 
-        {/* Itinerary Header */}
         <Card className="p-6 rounded-2xl shadow-sm mb-6">
           <h1 className="text-3xl font-bold text-primary mb-3">
             {itinerary.title}
           </h1>
 
-          {/* Destination */}
           {itinerary.destination && (
             <div className="flex items-center gap-2 text-muted-foreground mb-2">
               <MapPin className="h-4 w-4" />
-              <span className="font-medium">
                 {itinerary.destination.name}
-              </span>
               , {itinerary.destination.country}
             </div>
           )}
 
-          {/* Dates */}
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="h-4 w-4" />
-            {format(start, "MMM d, yyyy")} → {format(end, "MMM d, yyyy")}
+            {format(localStart, "MMM d, yyyy")} → {format(localEnd, "MMM d, yyyy")}
           </div>
         </Card>
 
-        {/* Days + Activities */}
         <div className="flex flex-col gap-6">
           {itinerary.days
             .sort((a, b) => a.dayNumber - b.dayNumber)
@@ -89,7 +84,6 @@ export default function ItineraryPage({ }: ItineraryPageProps) {
                     .map((activity) => (
                       <div key={activity.id} className="flex flex-col gap-1">
 
-                        {/* Time + Title */}
                         <div className="flex items-center gap-2 font-medium">
                           <Clock className="h-4 w-4 text-muted-foreground" />
 
@@ -100,19 +94,34 @@ export default function ItineraryPage({ }: ItineraryPageProps) {
                           <span>— {activity.name}</span>
                         </div>
 
-                        {/* Description */}
+                        {activity.category && (
+    <span
+      className="
+        px-2 py-0.5
+        text-xs font-semibold
+        rounded-full
+        bg-[#ffb88c]/20
+        text-[#ffb88c]
+        border border-[#ffb88c]/40
+        w-fit
+      "
+    >
+      {activity.category}
+    </span>
+  )}
+
+                        {activity.location && (
+                          <p className="text-sm text-muted-foreground">
+                            {activity.location}
+                          </p>
+                        )}
+
                         {activity.description && (
                           <p className="text-sm text-muted-foreground">
                             {activity.description}
                           </p>
                         )}
 
-                        {/* Location */}
-                        {activity.location && (
-                          <p className="text-sm text-muted-foreground">
-                            📍 {activity.location}
-                          </p>
-                        )}
                       </div>
                     ))}
                 </div>

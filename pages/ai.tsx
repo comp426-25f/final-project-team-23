@@ -125,68 +125,76 @@ export default function TravelPlannerPage() {
 
 function parseItinerary(text: string): ParsedDay[] {
   const days: ParsedDay[] = [];
-  const lines = text.split("\n").map((l) => l.trim());
+  const lines = text.split("\n").map(l => l.trim());
 
   let currentDay: ParsedDay | null = null;
   let currentActivity: ParsedActivity | null = null;
 
+  const dayRegex = /^Day\s+(\d+)(?:\s*\((.*?)\))?/i;
+  const activityLineRegex = /^(\d{1,2}:\d{2}(?:\s?(AM|PM))?)\s*[—–-]\s*(.+)$/i;
+  const categoryRegex = /^Category:\s*(.+)$/i;
+  const locationRegex = /^Location:\s*(📍.+)$/i;
+
   for (const line of lines) {
     if (!line) continue;
 
-    const dayMatch = line.match(/^Day\s+(\d+)(?:\s*\((.*)\))?/i);
+    const dayMatch = line.match(dayRegex);
     if (dayMatch) {
       if (currentDay) days.push(currentDay);
-
-      const dayNumber = Number(dayMatch[1]);
-      const notes = dayMatch[2] ? dayMatch[2].trim() : "";
-
       currentDay = {
-        dayNumber,
-        notes,
+        dayNumber: Number(dayMatch[1]),
+        notes: dayMatch[2]?.trim() ?? "",
         activities: [],
       };
       currentActivity = null;
       continue;
     }
 
-    const activityMatch = line.match(
-      /^(\d{1,2}:\d{2}(?:\s?(AM|PM))?)\s*[—–-]\s*(.+)$/
-    );
-
+    const activityMatch = line.match(activityLineRegex);
     if (activityMatch && currentDay) {
-      const time = activityMatch[1].trim();
-      const name = activityMatch[3].trim();
+      const time = activityMatch[1];
+      const name = activityMatch[3];
 
       currentActivity = {
         time: convertTime(time),
         name,
-        category: "General",
-        description: "",
+        category: "",
         location: "",
+        description: "",
       };
 
       currentDay.activities.push(currentActivity);
       continue;
     }
 
+    const catMatch = line.match(categoryRegex);
+    if (catMatch && currentActivity) {
+      currentActivity.category = catMatch[1].trim();
+      continue;
+    }
+
+    const locMatch = line.match(locationRegex);
+    if (locMatch && currentActivity) {
+      currentActivity.location = locMatch[1].trim();
+      continue;
+    }
+
     if ((line.startsWith("•") || line.startsWith("-")) && currentActivity) {
       currentActivity.description +=
-        (currentActivity.description ? "\n" : "") + line;
+        (currentActivity.description ? "\n" : "") +
+        line.replace(/^[-•]\s*/, "");
       continue;
     }
   }
 
   if (currentDay) days.push(currentDay);
-
   return days;
 }
-
 
 function getTripLength(from: Date, to: Date): number {
   const ms = to.getTime() - from.getTime();
   return Math.max(1, Math.ceil(ms / (1000 * 60 * 60 * 24)));
 }
-
 
 const handleSaveItinerary = () => {
     if (!profile) return toast.error("You must be logged in.");
@@ -217,127 +225,159 @@ const handleSaveItinerary = () => {
       description: input,
       content: stream,
       destinationId,
-      startDate: dateRange?.from
-        ? dateRange.from.toISOString()
-        : new Date().toISOString(),
-
-      endDate: dateRange?.to
-        ? dateRange.to.toISOString()
-        : new Date().toISOString(),
+      startDate: dateRange?.from ?? new Date(),
+      endDate: dateRange?.to ?? new Date(),
       days,
     });
   };
 
   return (
-    <div className="min-h-screen relative horizon-bg">
-      <main className="mx-auto w-full max-w-7xl px-6 py-12">
-        <div className="flex flex-col lg:flex-row gap-10 w-full items-start">
+  <div className="min-h-screen horizon-bg">
+    <main className="mx-auto w-full max-w-7xl px-6 py-12">
 
-          <div className="w-fit lg:w-[420px] shrink-0 flex flex-col gap-6 bg-white/5 p-4 rounded-2xl">
+      <div className="flex flex-col lg:flex-row gap-10 w-full items-start">
 
-            <div className="flex items-center gap-2 text-[#0A2A43]">
-              <PlaneTakeoff className="h-7 w-7 text-[#ffb88c]" />
-              <h1 className="text-3xl font-black tracking-tight">
-                AI Travel Planner<span className="text-[#ffb88c]">.</span>
-              </h1>
-            </div>
+        <div className="
+          w-full lg:w-[420px] shrink-0 flex flex-col gap-8 
+          bg-white/70 backdrop-blur-xl p-6 rounded-3xl 
+          border border-[#0A2A43]/10 shadow-lg
+        ">
 
-            <div className="flex flex-col gap-1 w-fit">
-              <label className="text-lg font-bold text-[#0A2A43]">Trip Details</label>
-              <Textarea
-                placeholder="Describe your trip..."
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                className="rounded-xl border border-gray-200 bg-white/70 shadow-sm h-[90px] w-[360px]"
-              />
-            </div>
+          <div className="flex items-center gap-3">
+            <PlaneTakeoff className="h-8 w-8 text-[#ffb88c]" />
+            <h1 className="text-3xl font-extrabold tracking-tight text-[#0A2A43]">
+              AI Travel Planner<span className="text-[#ffb88c]">.</span>
+            </h1>
+          </div>
 
-            <div className="space-y-1">
-                <label className="text-sm font-medium">Destination</label>
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-semibold text-[#0A2A43]">Trip Details</label>
+            <Textarea
+              placeholder="e.g. Backpacking Italy, love food + museums..."
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              className="
+                rounded-xl border border-[#0A2A43]/20 bg-white/60 
+                text-[#0A2A43] placeholder:text-[#0A2A43]/40 h-[90px] shadow-sm
+              "
+            />
+          </div>
 
-                <Select
-                value={destinationId}
-                onValueChange={(val: string) => setDestinationId(val)}
-                disabled={destinationsLoading}
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-semibold text-[#0A2A43]">Destination</label>
+
+            <Select
+              value={destinationId}
+              onValueChange={setDestinationId}
+              disabled={destinationsLoading}
+            >
+              <SelectTrigger className="rounded-xl bg-white/60 border border-[#0A2A43]/20 shadow-sm">
+                <SelectValue placeholder="Choose destination" />
+              </SelectTrigger>
+
+              <SelectContent>
+                {destinations?.map((dest) => (
+                  <SelectItem value={dest.id} key={dest.id}>
+                    {dest.name ? `${dest.name}, ${dest.country}` : dest.country}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-semibold text-[#0A2A43]">Trip Dates</label>
+            <DateRangePicker dateRange={dateRange} setDateRange={setDateRange} />
+            {dateRange?.from && dateRange?.to && (
+              <p className="text-xs text-[#0A2A43]/70 font-medium">
+                {format(dateRange.from, "MMM d, yyyy")} → {format(dateRange.to, "MMM d, yyyy")}
+              </p>
+            )}
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <label className="text-sm font-semibold text-[#0A2A43]">Interests</label>
+            <div className="flex flex-wrap gap-2 bg-white/50 rounded-xl p-3 border border-[#0A2A43]/10">
+
+              {[
+                { key: "history", icon: <Landmark className="h-4 w-4" /> },
+                { key: "culture", icon: <BookOpen className="h-4 w-4" /> },
+                { key: "nightlife", icon: <Music className="h-4 w-4" /> },
+                { key: "food", icon: <Utensils className="h-4 w-4" /> },
+                { key: "nature", icon: <Trees className="h-4 w-4" /> },
+                { key: "adventure", icon: <Map className="h-4 w-4" /> },
+              ].map(({ key, icon }) => (
+                <Button
+                  key={key}
+                  onClick={() => toggleFilter(key)}
+                  variant={filters.includes(key) ? "default" : "outline"}
+                  className={`
+                    rounded-xl px-3 py-1 text-sm font-medium
+                    ${filters.includes(key)
+                      ? "bg-[#ffb88c] text-[#0A2A43] border-[#ffb88c]"
+                      : "text-[#0A2A43] border-[#0A2A43]/20"
+                    }
+                  `}
                 >
-                <SelectTrigger>
-                    <SelectValue placeholder="Select a destination" />
-                </SelectTrigger>
-
-                <SelectContent>
-                    {destinations?.map((dest) => (
-                    <SelectItem value={dest.id} key={dest.id}>
-                        {dest.name ? `${dest.name}, ${dest.country}` : dest.country}
-                    </SelectItem>
-                    ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="flex flex-col gap-2 w-fit">
-              <label className="text-lg font-bold text-[#0A2A43]">Trip Dates</label>
-              <DateRangePicker dateRange={dateRange} setDateRange={setDateRange} />
-              {dateRange?.from && dateRange?.to && (
-                <p className="text-sm text-[#0A2A43] font-medium">
-                  {format(dateRange.from, "MMM d, yyyy")} → {format(dateRange.to, "MMM d, yyyy")}
-                </p>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-2 w-fit">
-            <label className="text-lg font-bold text-[#0A2A43]">Interests</label>
-            <div className="flex flex-wrap gap-2 bg-white/30 rounded-xl p-2 border border-white/30 w-fit">
-              <Button onClick={() => toggleFilter("history")}   variant={filters.includes("history") ? "default" : "outline"} className="rounded-xl"><Landmark className="h-4 w-4 mr-1" /> History</Button>
-              <Button onClick={() => toggleFilter("culture")}   variant={filters.includes("culture") ? "default" : "outline"} className="rounded-xl"><BookOpen className="h-4 w-4 mr-1" /> Culture</Button>
-              <Button onClick={() => toggleFilter("nightlife")} variant={filters.includes("nightlife") ? "default" : "outline"} className="rounded-xl"><Music className="h-4 w-4 mr-1" /> Nightlife</Button>
-              <Button onClick={() => toggleFilter("food")}      variant={filters.includes("food") ? "default" : "outline"}      className="rounded-xl"><Utensils className="h-4 w-4 mr-1" /> Food</Button>
-              <Button onClick={() => toggleFilter("nature")}    variant={filters.includes("nature") ? "default" : "outline"}    className="rounded-xl"><Trees className="h-4 w-4 mr-1" /> Nature</Button>
-              <Button onClick={() => toggleFilter("adventure")} variant={filters.includes("adventure") ? "default" : "outline"} className="rounded-xl"><Map className="h-4 w-4 mr-1" /> Adventure</Button>
-            </div>
-            </div>
-
-            <div className="flex flex-col gap-1 w-fit">
-              <Button onClick={handleGenerate} className="mt-3 w-fit px-6 py-5 rounded-xl text-lg font-bold shadow-md bg-[#0A2A43] text-white hover:bg-blue-800">
-                Generate Itinerary
-              </Button>
+                  {icon} <span className="ml-1 capitalize">{key}</span>
+                </Button>
+              ))}
             </div>
           </div>
 
-          <div className="flex flex-col gap-5 flex-1">
+          <Button
+            onClick={handleGenerate}
+            className="
+              mt-3 w-full px-6 py-4 rounded-xl text-lg font-bold shadow-md
+              bg-[#0A2A43] text-white hover:bg-[#0A2A43]/80 transition
+            "
+          >
+            Generate Itinerary
+          </Button>
+        </div>
+
+        <div className="flex flex-col gap-6 flex-1">
+
           <Card
-            className="w-full max-w-3xl mx-auto rounded-2xl shadow-xl p-6 border border-white/30 bg-white/90 h-[330px] sm:h-[380px] md:h-[510px] lg:h-[80vh] overflow-y-auto"
             ref={scrollRef}
+            className="
+              w-full max-w-3xl mx-auto rounded-3xl p-6 shadow-xl 
+              border border-[#0A2A43]/10 bg-white/80 backdrop-blur-xl
+              h-[330px] sm:h-[380px] md:h-[510px] lg:h-[80vh] overflow-y-auto
+            "
           >
             {stream ? (
-              <pre className="whitespace-pre-wrap text-[15px] leading-relaxed text-[#0A2A43] font-sans">
+              <pre className="whitespace-pre-wrap text-[15px] leading-relaxed text-[#0A2A43]">
                 {stream}
               </pre>
             ) : (
-              <p className="text-center text-gray-400 italic mt-12">
+              <p className="text-center text-[#0A2A43]/40 italic mt-12">
                 Your personalized itinerary will appear here...
               </p>
             )}
           </Card>
 
-            <Button
-              disabled={isSaving || !stream}
-              onClick={handleSaveItinerary}
-              className="self-center w-fit px-6 py-5 rounded-xl text-lg font-bold bg-[#ffb88c] text-[#0A2A43] hover:bg-orange-300"
-            >
-              {isSaving ? (
-                <>
-                  <Loader2Icon className="animate-spin mr-2" />
-                  Saving...
-                </>
-              ) : (
-                <>
-                  <Save className="mr-2" /> Save Itinerary
-                </>
-              )}
-            </Button>
-          </div>
+          <Button
+            disabled={isSaving || !stream}
+            onClick={handleSaveItinerary}
+            className="
+              self-center w-fit px-6 py-4 rounded-xl text-lg font-bold
+              bg-[#ffb88c] text-[#0A2A43] hover:bg-[#ff9f63] shadow-md transition
+            "
+          >
+            {isSaving ? (
+              <>
+                <Loader2Icon className="animate-spin mr-2" /> Saving...
+              </>
+            ) : (
+              <>
+                <Save className="mr-2" /> Save Itinerary
+              </>
+            )}
+          </Button>
         </div>
-      </main>
-    </div>
-  );
+      </div>
+    </main>
+  </div>
+);
 }

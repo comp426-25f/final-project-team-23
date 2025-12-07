@@ -44,11 +44,10 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
     },
   );
 
-  // NEW — get user itineraries when tab = "itineraries"
   const { data: itineraries, isLoading: itinerariesLoading } =
     api.itineraries.getUserItineraries.useQuery(
-      { cursor: 0 },
-      { enabled: tab === "itineraries" }
+  { userId: profileId },
+  { enabled: tab === "itineraries" }
     );
 
   const { mutate: toggleFollowing } =
@@ -68,7 +67,6 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
 
   const isPersonalPage = user.id === profileId;
 
-  // Avatar upload logic unchanged…
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { mutate: updateProfilePicture } =
@@ -94,14 +92,12 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
     <div className="flex w-full flex-row justify-center px-3">
       <div className="mt-4 mb-12 w-full md:w-[600px]">
         
-        {/* Back Button */}
         <div className="pb-3">
-          <Button variant="ghost" onClick={() => router.push("/")}>
+          <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft /> Back to Feed
           </Button>
         </div>
 
-        {/* Profile Card */}
         {profile && (
           <Card>
             <CardContent className="space-y-2 py-6">
@@ -130,7 +126,6 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
                   </div>
                 </div>
 
-                {/* Follow / Unfollow */}
                 {!isPersonalPage && isFollowing !== undefined && (
                   <Button
                     variant={isFollowing ? "secondary" : "default"}
@@ -141,7 +136,6 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
                   </Button>
                 )}
 
-                {/* Avatar change controls */}
                 {isPersonalPage &&
                   (profile.avatarUrl ? (
                     <Button
@@ -190,7 +184,6 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
           </Card>
         )}
 
-        {/* ---------- NEW PROFILE TABS ---------- */}
         <div className="mt-6 w-full rounded-xl border bg-card shadow">
           
           <div className="flex border-b">
@@ -217,7 +210,6 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
             </button>
           </div>
 
-          {/* ---------- JOURNALS ---------- */}
           {tab === "journals" && (
             <div className="p-4">
               {postsLoading ? (
@@ -237,7 +229,6 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
             </div>
           )}
 
-          {/* ---------- ITINERARIES ---------- */}
           {tab === "itineraries" && (
             <div className="p-4">
               {itinerariesLoading ? (
