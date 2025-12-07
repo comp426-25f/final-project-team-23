@@ -68,6 +68,8 @@ import {
   CommandItem,
 } from "@/components/ui/command";
 import { ChevronsUpDown, Check } from "lucide-react";
+import { createSupabaseServerClient } from "@/utils/supabase/clients/server-props";
+import { GetServerSidePropsContext } from "next";
 
 export default function ItineraryPage() {
   const { data: trips, isLoading: tripsLoading } = api.trips.getItineraries.useQuery();
@@ -1180,6 +1182,14 @@ function GetActivities({ dayId }: { dayId: string }) {
       itineraryDayId: dayId,
     });
 
+const sortedActivities =
+  activities
+    ?.slice()
+    .sort(
+      (a, b) =>
+        new Date(a.time).getTime() - new Date(b.time).getTime()
+    ) ?? [];
+
   const categories = [
     "Dining",
     "Accommodation",
@@ -1343,7 +1353,7 @@ function GetActivities({ dayId }: { dayId: string }) {
       {activitiesLoading ? (
         <p className="text-sm text-muted-foreground">Loading activities...</p>
       ) : activities && activities.length > 0 ? (
-        activities.map((activity) => (
+        sortedActivities.map((activity) => (
           <Card
             className="mb-2 bg-white/90 border border-slate-100 rounded-xl shadow-sm space-y-2"
             key={activity.id}
@@ -1661,4 +1671,25 @@ function GetActivities({ dayId }: { dayId: string }) {
   );
 }
 
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  // Create the supabase context that works specifically on the server and
+  // pass in the context.
+  const supabase = createSupabaseServerClient(context);
 
+  // Attempt to load the user data
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+
+  // If the user is not logged in, redirect them to the login page.
+  if (userError || !userData) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
+}
