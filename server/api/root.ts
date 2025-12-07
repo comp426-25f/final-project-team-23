@@ -12,12 +12,14 @@ import { postsApiRouter } from "./routers/posts";
 import { profilesApiRouter } from "./routers/profiles";
 import { travelItineraryRouter } from "./routers/itineraries";
 import { destinationsApiRouter } from "./routers/destinations";
+import { groupChatsApiRouter } from "./routers/groupChats";
 
 // [NOTE]
 // To expose a new API, add a new router here.
 
 /** Primary router for the API server. */
 export const appRouter = createTRPCRouter({
+  groupChats: groupChatsApiRouter,
   posts: postsApiRouter,
   profiles: profilesApiRouter,
   itineraries: travelItineraryRouter,

@@ -90,7 +90,7 @@ return (
           <CardContent className="text-gray-700 font-medium">
             Collaborate on itineraries with your friends in real time.
             <Button className="mt-4 w-full py-6 text-lg font-bold rounded-xl bg-[#0A2A43] text-white">
-              <Link href="/groups">Open Chats</Link>
+              <Link href="/groupChats">Open Chats</Link>
             </Button>
           </CardContent>
         </Card>
