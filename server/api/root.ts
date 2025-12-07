@@ -12,6 +12,7 @@ import { postsApiRouter } from "./routers/posts";
 import { profilesApiRouter } from "./routers/profiles";
 import { travelItineraryRouter } from "./routers/itineraries";
 import { destinationsApiRouter } from "./routers/destinations";
+import { itinerariesApiRouter } from "./routers/trips";
 
 // [NOTE]
 // To expose a new API, add a new router here.
@@ -22,6 +23,7 @@ export const appRouter = createTRPCRouter({
   profiles: profilesApiRouter,
   itineraries: travelItineraryRouter,
   destinations: destinationsApiRouter,
+  trips: itinerariesApiRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -35,7 +35,7 @@ export default function ItineraryPage({ }: ItineraryPageProps) {
   return (
     <div className="flex w-full flex-row justify-center px-3">
       <div className="mt-4 mb-12 w-full md:w-[700px]">
-        
+
         {/* Back Button */}
         <div className="pb-3">
           <Button variant="ghost" onClick={() => router.push("/")}>
@@ -88,7 +88,7 @@ export default function ItineraryPage({ }: ItineraryPageProps) {
                     .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime())
                     .map((activity) => (
                       <div key={activity.id} className="flex flex-col gap-1">
-                        
+
                         {/* Time + Title */}
                         <div className="flex items-center gap-2 font-medium">
                           <Clock className="h-4 w-4 text-muted-foreground" />

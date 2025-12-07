@@ -15,7 +15,7 @@ import {
   itineraryTable,
   activitiesTable,
 } from "@/server/db/schema";
-import { eq, and, inArray, desc } from "drizzle-orm";
+import { eq, and, inArray, desc, or } from "drizzle-orm";
 import { TRPCError } from "@trpc/server";
 import {
   ItineraryDayIdentity,
@@ -40,7 +40,10 @@ const getItineraries = protectedProcedure
     const memberTripIds = memberTrips.map((member) => member.itineraryId);
 
     const itineraries = await db.query.itineraryTable.findMany({
-      where: inArray(itineraryTable.id, memberTripIds),
+      where: or(
+        inArray(itineraryTable.id, memberTripIds),
+        eq(itineraryTable.authorId, subject.id),
+      ),
       orderBy: [itineraryTable.createdAt],
       columns: {
         id: true,
@@ -61,6 +64,50 @@ const getItineraries = protectedProcedure
             itineraryId: true,
             dayNumber: true,
             notes: true,
+          },
+          with: {
+            activities: {
+              columns: {
+                id: true,
+                itineraryDayId: true,
+                name: true,
+                time: true,
+                description: true,
+                category: true,
+                location: true,
+              },
+            },
+          },
+        },
+        destination: {
+          columns: {
+            id: true,
+            name: true,
+            country: true,
+            continent: true,
+          },
+        },
+        collaborators: {
+          columns: {
+            profileId: true,
+          },
+          with: {
+            profile: {
+              columns: {
+                id: true,
+                username: true,
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+        author: {
+          columns: {
+            id: true,
+            username: true,
+            displayName: true,
+            avatarUrl: true,
           },
         },
       },
@@ -117,11 +164,56 @@ const getItinerary = protectedProcedure
       },
       with: {
         days: {
+          orderBy: [itineraryDaysTable.dayNumber],
           columns: {
             id: true,
             itineraryId: true,
             dayNumber: true,
             notes: true,
+          },
+          with: {
+            activities: {
+              columns: {
+                id: true,
+                itineraryDayId: true,
+                name: true,
+                time: true,
+                description: true,
+                category: true,
+                location: true,
+              },
+            },
+          },
+        },
+        destination: {
+          columns: {
+            id: true,
+            name: true,
+            country: true,
+            continent: true,
+          },
+        },
+        collaborators: {
+          columns: {
+            profileId: true,
+          },
+          with: {
+            profile: {
+              columns: {
+                id: true,
+                username: true,
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+        author: {
+          columns: {
+            id: true,
+            username: true,
+            displayName: true,
+            avatarUrl: true,
           },
         },
       },
@@ -152,14 +244,37 @@ const deleteItinerary = protectedProcedure
     const { subject } = ctx;
     const { itineraryId } = input;
 
-    await db
-      .delete(itineraryTable)
-      .where(
-        and(
-          eq(itineraryTable.id, itineraryId),
-          eq(itineraryTable.authorId, subject.id),
-        ),
-      );
+    await db.transaction(async (tx) => {
+      const days = await tx
+        .select({ id: itineraryDaysTable.id })
+        .from(itineraryDaysTable)
+        .where(eq(itineraryDaysTable.itineraryId, itineraryId));
+
+      const dayIds = days.map((d) => d.id);
+
+      if (dayIds.length > 0) {
+        await tx
+          .delete(activitiesTable)
+          .where(inArray(activitiesTable.itineraryDayId, dayIds));
+
+        await tx
+          .delete(itineraryDaysTable)
+          .where(eq(itineraryDaysTable.itineraryId, itineraryId));
+      }
+
+      await tx
+        .delete(itineraryCollaboratorsTable)
+        .where(eq(itineraryCollaboratorsTable.itineraryId, itineraryId));
+
+      await tx
+        .delete(itineraryTable)
+        .where(
+          and(
+            eq(itineraryTable.id, itineraryId),
+            eq(itineraryTable.authorId, subject.id),
+          ),
+        );
+    });
   });
 
 const createItinerary = protectedProcedure
@@ -167,53 +282,106 @@ const createItinerary = protectedProcedure
   .output(Itinerary)
   .mutation(async ({ ctx, input }) => {
     const { subject } = ctx;
+    try {
+      const [createdItinerary] = await db
+        .insert(itineraryTable)
+        .values({
+          title: input.title,
+          authorId: subject.id,
+          createdAt: new Date(),
+          startDate: toPgDate(input.startDate),
+          endDate: toPgDate(input.endDate),
+          description: input.description,
+          content: input.content,
+          destinationId: input.destinationId,
+        })
+        .returning({ id: itineraryTable.id });
 
-    const [createdItinerary] = await db
-      .insert(itineraryTable)
-      .values({
-        title: input.title,
-        authorId: subject.id,
-        createdAt: new Date(),
-        startDate: input.startDate,
-        endDate: input.endDate,
-        description: input.description,
-        content: input.content,
-        destinationId: input.destinationId,
-      })
-      .returning({ id: itineraryTable.id });
+      await db.insert(itineraryCollaboratorsTable).values({
+        itineraryId: createdItinerary.id,
+        profileId: subject.id,
+      });
 
-    await db.insert(itineraryCollaboratorsTable).values({
-      itineraryId: createdItinerary.id,
-      profileId: subject.id,
-    });
-
-    const finalItin = await db.query.itineraryTable.findFirst({
-      where: eq(itineraryTable.id, createdItinerary.id),
-      columns: {
-        title: true,
-        id: true,
-        authorId: true,
-        createdAt: true,
-        startDate: true,
-        endDate: true,
-        description: true,
-        content: true,
-        destinationId: true,
-      },
-      with: {
-        days: {
-          columns: {
-            id: true,
-            itineraryId: true,
-            dayNumber: true,
-            notes: true,
+      const finalItin = await db.query.itineraryTable.findFirst({
+        where: eq(itineraryTable.id, createdItinerary.id),
+        columns: {
+          title: true,
+          id: true,
+          authorId: true,
+          createdAt: true,
+          startDate: true,
+          endDate: true,
+          description: true,
+          content: true,
+          destinationId: true,
+        },
+        with: {
+          days: {
+            columns: {
+              id: true,
+              itineraryId: true,
+              dayNumber: true,
+              notes: true,
+            },
+            with: {
+              activities: {
+                columns: {
+                  id: true,
+                  itineraryDayId: true,
+                  name: true,
+                  time: true,
+                  description: true,
+                  category: true,
+                  location: true,
+                },
+              },
+            },
+          },
+          destination: {
+            columns: {
+              id: true,
+              name: true,
+              country: true,
+              continent: true,
+            },
+          },
+          collaborators: {
+            columns: {
+              profileId: true,
+            },
+            with: {
+              profile: {
+                columns: {
+                  id: true,
+                  username: true,
+                  displayName: true,
+                  avatarUrl: true,
+                },
+              },
+            },
+          },
+          author: {
+            columns: {
+              id: true,
+              username: true,
+              displayName: true,
+              avatarUrl: true,
+            },
           },
         },
-      },
-    });
+      });
+      if (!finalItin) throw new TRPCError({ code: "NOT_FOUND" });
+      return Itinerary.parse(finalItin);
+    } catch (e) {
+      console.error("❌ createItinerary DB error:");
+      console.error(JSON.stringify(e, Object.getOwnPropertyNames(e), 2));
 
-    if (!finalItin) throw new TRPCError({ code: "NOT_FOUND" });
-    return Itinerary.parse(finalItin);
+      throw new TRPCError({
+        code: "INTERNAL_SERVER_ERROR",
+        message: "Failed to create itinerary",
+        cause: e,
+      });
+    }
   });
 
 const joinItinerary = protectedProcedure
@@ -247,6 +415,50 @@ const joinItinerary = protectedProcedure
             dayNumber: true,
             itineraryId: true,
             notes: true,
+          },
+          with: {
+            activities: {
+              columns: {
+                id: true,
+                itineraryDayId: true,
+                name: true,
+                time: true,
+                description: true,
+                category: true,
+                location: true,
+              },
+            },
+          },
+        },
+        destination: {
+          columns: {
+            id: true,
+            name: true,
+            country: true,
+            continent: true,
+          },
+        },
+        collaborators: {
+          columns: {
+            profileId: true,
+          },
+          with: {
+            profile: {
+              columns: {
+                id: true,
+                username: true,
+                displayName: true,
+                avatarUrl: true,
+              },
+            },
+          },
+        },
+        author: {
+          columns: {
+            id: true,
+            username: true,
+            displayName: true,
+            avatarUrl: true,
           },
         },
       },
@@ -325,9 +537,10 @@ const getDays = protectedProcedure
 const createDay = protectedProcedure
   .input(NewItineraryDay)
   .mutation(async ({ input }) => {
-    await db.update(itineraryDaysTable).set({
+    await db.insert(itineraryDaysTable).values({
       notes: input.notes,
       dayNumber: input.dayNumber,
+      itineraryId: input.itineraryId,
     });
   });
 
@@ -353,7 +566,7 @@ const getActivities = protectedProcedure
   .output(Activity.array())
   .query(async ({ input }) => {
     const activities = await db.query.activitiesTable.findMany({
-      where: eq(itineraryDaysTable.id, input.itineraryDayId),
+      where: eq(activitiesTable.itineraryDayId, input.itineraryDayId),
       orderBy: [desc(activitiesTable.time)],
       columns: {
         id: true,
@@ -386,13 +599,23 @@ const editActivity = protectedProcedure
   .input(Activity)
   .mutation(async ({ input }) => {
     const { description, name, time, category, location } = input;
-    await db.update(activitiesTable).set({
-      description: description,
-      name: name,
-      time: time,
-      category: category,
-      location: location,
-    });
+    await db
+      .update(activitiesTable)
+      .set({
+        description: description,
+        name: name,
+        time: time,
+        category: category,
+        location: location,
+      })
+      .where(eq(activitiesTable.id, input.id));
+  });
+
+const deleteActivity = protectedProcedure
+  .input(z.object({ activityId: z.string() }))
+  .mutation(async ({ input }) => {
+    const { activityId } = input;
+    await db.delete(activitiesTable).where(eq(activitiesTable.id, activityId));
   });
 
 export const itinerariesApiRouter = createTRPCRouter({
@@ -411,4 +634,7 @@ export const itinerariesApiRouter = createTRPCRouter({
   getActivities: getActivities,
   createActivity: createActivity,
   editActivity: editActivity,
+  deleteActivity: deleteActivity,
 });
+// To comply with postgress format
+const toPgDate = (d: Date) => d.toISOString().slice(0, 10);

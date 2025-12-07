@@ -108,6 +108,7 @@ export const ItineraryDay = z.object({
 
 export const ItineraryCollaborator = z.object({
   profileId: z.string().uuid(),
+  profile: Profile,
 });
 
 export const Itinerary = z.object({
@@ -118,8 +119,7 @@ export const Itinerary = z.object({
   startDate: z.date({ coerce: true }),
   endDate: z.date({ coerce: true }),
   createdAt: z.date({ coerce: true }),
-
-  destination: Destination.nullable(),
+  destinationId: z.string(),
   collaborators: ItineraryCollaborator.array(),
   days: ItineraryDay.array(),
   author: Profile,

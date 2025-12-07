@@ -80,8 +80,8 @@ export const NewItinerary = z.object({
   description: z.string().optional(),
   content: z.string().optional(),
   destinationId: z.string().uuid(),
-  startDate: z.string(),
-  endDate: z.string(),
+  startDate: z.coerce.date(),
+  endDate: z.coerce.date(),
 });
 
 export const AddItineraryCollaborator = z.object({

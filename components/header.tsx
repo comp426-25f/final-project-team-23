@@ -25,7 +25,7 @@ export default function Header() {
 
         <div className="flex flex-row text-3xl font-extrabold tracking-tight">
           <Link href="/" className="block w-fit text-4xl font-black text-[#0A2A43]">
-          wandr<span className="text-[#ffb88c]">.</span>
+            wandr<span className="text-[#ffb88c]">.</span>
           </Link>
 
         </div>
