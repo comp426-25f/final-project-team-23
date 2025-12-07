@@ -1,7 +1,7 @@
 import { NavigationMenu, NavigationMenuItem, NavigationMenuList } from "@radix-ui/react-navigation-menu";
 import { createSupabaseComponentClient } from "@/utils/supabase/clients/component";
 import { useRouter } from "next/router";
-import { LogOut, UserRound } from "lucide-react";
+import { LogOut, UserRound, Sun, Moon } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { api } from "@/utils/trpc/api";
 import {
@@ -10,17 +10,20 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { useTheme } from "next-themes";
 import Link from "next/link";
 
 export default function Header() {
   const supabase = createSupabaseComponentClient();
   const router = useRouter();
   const apiUtils = api.useUtils();
+  const { theme, setTheme } = useTheme();
 
   const { data: profile, isLoading } = api.profiles.getAuthedUserProfile.useQuery();
 
   if (isLoading) return null;
   if (!profile) return null;
+
 
   return (
     <header className="w-full border-b bg-white/70 backdrop-blur-md">
@@ -73,8 +76,8 @@ export default function Header() {
                 src={
                   profile?.avatarUrl
                     ? supabase.storage
-                        .from("avatars")
-                        .getPublicUrl(profile.avatarUrl).data.publicUrl
+                      .from("avatars")
+                      .getPublicUrl(profile.avatarUrl).data.publicUrl
                     : undefined
                 }
               />
@@ -87,6 +90,20 @@ export default function Header() {
           <DropdownMenuContent align="end">
             <DropdownMenuItem onClick={() => router.push(`/profile/${profile?.id}`)}>
               <UserRound /> My Profile
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+              {theme === "dark" ? (
+                <>
+                  <Sun className="h-4 w-4" />
+                  <p>Light Mode</p>
+                </>
+              ) : (<>
+                <Moon className="h-4 w-4" />
+                <p>Dark Mode</p>
+              </>
+              )}
+
             </DropdownMenuItem>
 
             <DropdownMenuItem
@@ -102,6 +119,6 @@ export default function Header() {
         </DropdownMenu>
 
       </div>
-    </header>
+    </header >
   );
 }

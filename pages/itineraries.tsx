@@ -625,18 +625,18 @@ function GetDays({ itineraryId, onTripDeleted }: { itineraryId: string, onTripDe
                 </div>
                 <p className="pt-4 text-muted-foreground text-lg">
                     {itinerary?.startDate &&
-    format(
-      new Date(itinerary.startDate.getTime() + itinerary.startDate.getTimezoneOffset() * 60000),
-      "MMM d, yyyy"
-    )
-  }
-  {" – "}
-  {itinerary?.endDate &&
-    format(
-      new Date(itinerary.endDate.getTime() + itinerary.endDate.getTimezoneOffset() * 60000),
-      "MMM d, yyyy"
-    )
-  }
+                        format(
+                            new Date(itinerary.startDate.getTime() + itinerary.startDate.getTimezoneOffset() * 60000),
+                            "MMM d, yyyy"
+                        )
+                    }
+                    {" – "}
+                    {itinerary?.endDate &&
+                        format(
+                            new Date(itinerary.endDate.getTime() + itinerary.endDate.getTimezoneOffset() * 60000),
+                            "MMM d, yyyy"
+                        )
+                    }
                 </p>
                 <p className="pt-4 text-lg text-muted-foreground">{itinerary?.description}</p>
             </div>
@@ -1176,7 +1176,7 @@ function GetActivities({ dayId }: { dayId: string }) {
                 activities.map((activity) => (
                     <Card className="mb-2 bg-muted/80 space-y-2" key={activity.id}>
                         <CardHeader className="-my-1">
-                            <div className="flex justify-between -mb-3">
+                            <div className="flex justify-between -mb-1 items-center">
                                 <div className="flex flex-row">
                                     <p className="text-sm font-medium text-gray-600 mr-4">
                                         {activity.time
