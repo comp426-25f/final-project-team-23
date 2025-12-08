@@ -110,7 +110,7 @@
 }
 
 .dark .text-muted-foreground {
-  color: #e2e8f0 !important; /* bright cool gray */
+  color: #e2e8f0 !important; 
 }
 
 @layer base {
