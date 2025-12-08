@@ -7,12 +7,9 @@ import PostCard from "@/components/post";
 import { Subject } from "@/server/models/auth";
 import { useAuth } from "@/utils/use-auth";
 import Link from "next/link";
-<<<<<<< HEAD
 import { createSupabaseServerClient } from "@/utils/supabase/clients/server-props";
 import { GetServerSidePropsContext } from "next";
-=======
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
->>>>>>> 3f2d8f1 (update)
 
 export default function FriendsFeedPage() {
   const { user, isLoading: authLoading } = useAuth();

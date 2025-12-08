@@ -71,15 +71,6 @@ export default function GroupChatsIndexPage() {
     );
   }
 
-  if (!user) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-        <p>You must be logged in to view group chats.</p>
-        <Button onClick={() => router.push("/")}>Back to home</Button>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-muted/30">
       <main className="mx-auto flex max-w-3xl flex-col gap-4 p-4 md:p-8">
@@ -173,7 +164,6 @@ export default function GroupChatsIndexPage() {
           </Card>
         )}
 
-        {/* List of group chats */}
         <Card>
           <CardContent className="space-y-3 py-4">
             <h2 className="text-lg font-semibold">Your group chats</h2>
@@ -213,7 +203,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   const supabase = createSupabaseServerClient(context);
 
   // Attempt to load the user data
-  const { data: userData, error: userError } = await supabase.auth.getUser();
+  const { data: userData, error: userError } = await supabase.auth.getClaims();
 
   // If the user is not logged in, redirect them to the login page.
   if (userError || !userData) {
@@ -226,6 +216,9 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
   }
 
   return {
-    props: {},
-  };
+    props: {
+      user: { id: userData.claims.sub },
+    },
+};
 }
+

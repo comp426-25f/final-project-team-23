@@ -69,15 +69,6 @@ export default function GroupChatPage() {
     );
   }
 
-  if (!user) {
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4">
-        <p>You must be logged in to view this group chat.</p>
-        <Button onClick={() => router.push("/")}>Back to home</Button>
-      </div>
-    );
-  }
-
   const messageList = (messages ?? []).slice().reverse();
 
   return (
