@@ -77,7 +77,7 @@
 
 .dark {
   --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
+  --foreground: oklch(0.98 0 0);
   --card: oklch(0.21 0.006 285.885);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.21 0.006 285.885);
@@ -113,12 +113,14 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
   }
 }
 
 @layer utilities {
+
   /* Hide scrollbar for Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -126,19 +128,71 @@
 
   /* Hide scrollbar for IE, Edge and Firefox */
   .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
   }
 }
 
 .horizon-bg {
-  background: linear-gradient(
-    to bottom,
-    #ffe3cc 0%,  
-    #fff5d1 35%, 
-    #9edbf9 60%
-  );
+  background: linear-gradient(to bottom,
+      #ffe3cc 0%,
+      #fff5d1 35%,
+      #9edbf9 60%);
 }
+
+.dark .horizon-bg {
+  background: linear-gradient(to bottom,
+      #020617 0%,
+      #0f1628 50%,
+      #1e2539 100%);
+}
+
+.dark .text-muted-foreground {
+  color: var(--foreground);
+}
+
+.dark [data-slot="card-title"] {
+  color: oklch(0.97 0 0) !important; 
+}
+
+.dark [data-slot="card-header"] {
+  color: oklch(0.97 0 0) !important;
+}
+
+
+.dark .bg-white\/80,
+.dark .bg-white\/70,
+.dark .bg-white {
+  background-color: oklch(0.17 0.006 285.885 / 0.9); /* soft navy slate */
+  border-color: oklch(0.35 0.01 285.9);
+}
+
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-gray-500 {
+  color: oklch(0.96 0 0);
+}
+
+.dark .text-\[\#0A2A43\] {
+  color: oklch(0.98 0 0);
+}
+
+.dark .text-\[\#ffb88c\],
+.dark .fill-\[\#ffb88c\],
+.dark .stroke-\[\#ffb88c\] {
+  color: oklch(0.9 0.05 75);
+}
+
+.dark .bg-\[\#0A2A43\] {
+  background-color: oklch(0.35 0.02 265);
+  color: oklch(0.98 0 0);
+}
+.dark .bg-\[\#0A2A43\]:hover {
+  background-color: oklch(0.45 0.03 265);
+}
+
 
 
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Kalam:wght@300;400;700&display=swap');
@@ -149,12 +203,10 @@
 }
 
 .polaroid {
-  box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
 }
 
 .tape {
   background: rgba(255, 184, 140, 0.35);
   backdrop-filter: blur(2px);
 }
-
-

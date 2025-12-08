@@ -103,16 +103,17 @@ export default function CreatePostPage({ user }: Props) {
           border-[3px] border-[#0A2A43]/20
           rounded-2xl shadow-xl p-6 relative 
           animate-fadeIn
+          dark:bg-slate-900/90
         ">
-          
-<div className="
+
+          <div className="
   absolute top-2 right-2 
   rotate-[-8deg] 
   pointer-events-none select-none
   mix-blend-multiply 
   opacity-80
 ">
-  <div className="
+            <div className="
     w-28 h-28 
     rounded-full 
     border-[3px] border-[#ffb88c]
@@ -123,39 +124,39 @@ export default function CreatePostPage({ user }: Props) {
     tracking-[0.15em]
     relative
   ">
-    <span className="absolute top-9 font-bold">WANDR</span>
-    <span className="absolute bottom-9 text-[0.6rem] tracking-widest">
-      EST. 2025
-    </span>
+              <span className="absolute top-9 font-bold">WANDR</span>
+              <span className="absolute bottom-9 text-[0.6rem] tracking-widest">
+                EST. 2025
+              </span>
 
-    <div className="
+              <div className="
       absolute inset-0 rounded-full 
       border-[2px] border-[#ffb88c]/60
     " />
 
-    <div className="
+              <div className="
       absolute inset-2 rounded-full 
       border-[2px] border-dashed border-[#ffb88c]/70
     " />
-  </div>
-</div>
+            </div>
+          </div>
 
 
           <CardHeader className="pb-2">
-  <div className="flex flex-col gap-1">
-    <span className="text-xs tracking-[0.3em] text-[#ffb88c] font-semibold">
-      JOURNAL ENTRY
-    </span>
-    <CardTitle className="font-[var(--journal-font)] text-4xl text-[#0A2A43]
+            <div className="flex flex-col gap-1">
+              <span className="text-xs tracking-[0.3em] text-[#ffb88c] font-semibold">
+                JOURNAL ENTRY
+              </span>
+              <CardTitle className="font-[var(--journal-font)] text-4xl text-[#0A2A43]
  tracking-tight">
-      {new Date().toLocaleDateString("en-US", {
-        month: "long",
-        day: "numeric",
-        year: "numeric",
-      })}
-    </CardTitle>
-  </div>
-</CardHeader>
+                {new Date().toLocaleDateString("en-US", {
+                  month: "long",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </CardTitle>
+            </div>
+          </CardHeader>
 
           <CardContent className="space-y-6">
 
@@ -165,12 +166,12 @@ export default function CreatePostPage({ user }: Props) {
                   src={
                     profile?.avatarUrl
                       ? supabase.storage
-                          .from("avatars")
-                          .getPublicUrl(profile.avatarUrl).data.publicUrl
+                        .from("avatars")
+                        .getPublicUrl(profile.avatarUrl).data.publicUrl
                       : undefined
                   }
                 />
-                <AvatarFallback>{profile?.displayName?.slice(0,2).toUpperCase()}</AvatarFallback>
+                <AvatarFallback>{profile?.displayName?.slice(0, 2).toUpperCase()}</AvatarFallback>
               </Avatar>
 
               <div className="flex-1 journal-margin pl-3">
@@ -182,14 +183,14 @@ export default function CreatePostPage({ user }: Props) {
                     h-60 bg-transparent border-none shadow-none
                     focus-visible:ring-0 resize-none 
                     journal-lines text-[#0A2A43] text-[1.35rem] leading-relaxed 
-                    font-[var(--journal-font)]
+                    font-[var(--journal-font)] dark:text-slate-800 dark:placeholder:text-slate-600
                   "
                 />
               </div>
             </div>
 
             <div>
-              <label className="text-xs uppercase tracking-widest text-[#0A2A43]/60 font-medium">
+              <label className="text-xs uppercase tracking-widest text-[#0A2A43]/60 dark:text-slate-400 font-medium">
                 Destination
               </label>
               <Select
@@ -220,19 +221,19 @@ export default function CreatePostPage({ user }: Props) {
             />
 
             {previewUrl && (
-  <div className="relative inline-block mt-4 shadow-lg bg-white p-3 rounded-md rotate-1 polaroid">
-    <div className="absolute -top-4 left-10 w-28 h-7 tape rotate-6 shadow-sm" />
-    
-    <Image
-      src={previewUrl}
-      alt="Preview"
-      width={350}
-      height={350}
-      unoptimized
-      className="rounded-md shadow-md"
-    />
-  </div>
-)}
+              <div className="relative inline-block mt-4 shadow-lg bg-white p-3 rounded-md rotate-1 polaroid">
+                <div className="absolute -top-4 left-10 w-28 h-7 tape rotate-6 shadow-sm" />
+
+                <Image
+                  src={previewUrl}
+                  alt="Preview"
+                  width={350}
+                  height={350}
+                  unoptimized
+                  className="rounded-md shadow-md"
+                />
+              </div>
+            )}
           </CardContent>
 
           <CardFooter className="flex justify-between pt-4">

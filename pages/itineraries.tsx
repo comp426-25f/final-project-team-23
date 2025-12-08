@@ -760,7 +760,7 @@ function GetDays({
             </div>
 
 
-            <Card className="w-full max-w-3xl bg-white/90 border border-slate-100 rounded-2xl shadow-md">
+            <Card className="w-full max-w-3xl bg-white/90 dark:bg-slate-900/80 border border-slate-100 dark:border-slate-700 rounded-2xl shadow-md">
                 <CardContent className="py-4">
                     <div className="flex flex-row items-center gap-3">
                         <Users className="text-muted-foreground" size={28} />
@@ -799,10 +799,6 @@ function GetDays({
                                 </div>
                             </DialogContent>
                         </Dialog>
-
-                        <Badge variant="outline" className="rounded-full">
-                            {onlineUsers.length} Active
-                        </Badge>
 
                         <div className="ml-auto">
                             <Dialog>
@@ -951,12 +947,12 @@ function GetDays({
                 ) : (
                     days?.map((day) => (
                         <Card
-                            className="mb-3 bg-white/90 border border-slate-100 rounded-2xl shadow-sm"
+                            className="mb-3 bg-white/90 dark:bg-slate-900/80 border border-slate-100 dark:border-slate-700 rounded-2xl shadow-sm"
                             key={day.id}
                         >
                             <CardHeader>
                                 <div className="flex flex-row justify-between items-center">
-                                    <h2 className="font-semibold text-[#0A2A43]">
+                                    <h2 className="font-semibold text-[#0A2A43] dark: text-white">
                                         Day {day.dayNumber}
                                     </h2>
                                     <DropdownMenu>
@@ -1013,7 +1009,7 @@ function GetDays({
                                         </DropdownMenuContent>
                                     </DropdownMenu>
                                 </div>
-                                <p className="text-sm font-medium text-gray-600 mt-1">
+                                <p className="text-sm font-medium dark:text-slate-300 text-gray-600 mt-1">
                                     {day.notes}
                                 </p>
                                 <GetActivities dayId={day.id} />
@@ -1354,13 +1350,13 @@ function GetActivities({ dayId }: { dayId: string }) {
             ) : activities && activities.length > 0 ? (
                 sortedActivities.map((activity) => (
                     <Card
-                        className="mb-2 bg-white/90 border border-slate-100 rounded-xl shadow-sm space-y-2"
+                        className="mb-2 bg-white/90 dark:bg-slate-900/80 border border-slate-100 dark:border-slate-700 rounded-xl shadow-sm space-y-2"
                         key={activity.id}
                     >
                         <CardHeader className="py-3">
                             <div className="flex justify-between items-center">
                                 <div className="flex flex-row items-center gap-3">
-                                    <p className="text-sm font-medium text-gray-600">
+                                    <p className="text-sm font-medium text-gray-600 dark:text-slate-300">
                                         {activity.time
                                             ? new Date(activity.time).toLocaleTimeString("en-US", {
                                                 hour: "2-digit",
