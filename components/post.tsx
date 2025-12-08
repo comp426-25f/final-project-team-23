@@ -1,4 +1,4 @@
-import { ExternalLink, Heart } from "lucide-react";
+import { Heart } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { z } from "zod";
@@ -7,7 +7,6 @@ import { createSupabaseComponentClient } from "@/utils/supabase/clients/componen
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/router";
 import { api } from "@/utils/trpc/api";
 import { Subject } from "@/server/models/auth";
 
@@ -18,7 +17,6 @@ type PostCardProps = {
 export default function PostCard({ user, post }: PostCardProps) {
   // Create necessary hooks for clients and providers.
   const supabase = createSupabaseComponentClient();
-  const router = useRouter();
 
   // Determine the initial value for the `isLiked` hook.
   const likedByUser = post.likes.some((like) => like.profileId === user?.id);
@@ -89,15 +87,6 @@ export default function PostCard({ user, post }: PostCardProps) {
                 {numberOfLikes + (isLiked ? 1 : 0)}
               </p>
               <Heart className={`${isLiked ? "text-pink-600" : ""}`} />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                router.push(`/post/${post.id}`);
-              }}
-            >
-              <ExternalLink className="text-muted-foreground" />
             </Button>
           </div>
         </div>
