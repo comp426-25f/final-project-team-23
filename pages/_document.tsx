@@ -12,7 +12,10 @@ import { Html, Head, Main, NextScript } from "next/document";
 export default function Document() {
   return (
     <Html lang="en">
-      <Head />
+      <Head>
+        <meta name="description" content="Wandr is an application used to plan vacations and explore new destinations, both alone and with friends." />
+        <title>Wandr</title>
+      </Head>
       <body className="antialiased">
         <Main />
         <NextScript />

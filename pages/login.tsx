@@ -43,7 +43,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen relative flex items-center justify-center p-6 overflow-hidden horizon-bg">
-
     <div className="absolute top-10 right-24 z-0">
       <Cloud className="w-36 h-36 fill-white text-white opacity-80 blur-[2px]" />
     </div>
