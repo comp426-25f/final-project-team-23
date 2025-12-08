@@ -197,25 +197,25 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
             <div className="flex border-b rounded-t-2xl overflow-hidden">
               <button
                 onClick={() => setTab("journals")}
-                className={`px-4 py-3 flex-1 text-center font-medium transition ${
-                  tab === "journals"
-                    ? "text-[#0A2A43] border-b-2 border-[#0A2A43] bg-slate-50"
-                    : "text-muted-foreground hover:text-[#0A2A43] hover:bg-slate-50/60"
-                }`}
+                className={`px-4 py-3 flex-1 text-center font-medium transition border-b-2 ${
+                tab === "journals"
+                  ? "border-primary text-primary dark:text-primary bg-primary/5 dark:bg-primary/15"
+                  : "border-transparent text-muted-foreground hover:text-primary dark:hover:text-primary"
+              }`}
               >
-                Journals
-              </button>
+              Journals
+            </button>
 
-              <button
-                onClick={() => setTab("itineraries")}
-                className={`px-4 py-3 flex-1 text-center font-medium transition ${
-                  tab === "itineraries"
-                    ? "text-[#0A2A43] border-b-2 border-[#0A2A43] bg-slate-50"
-                    : "text-muted-foreground hover:text-[#0A2A43] hover:bg-slate-50/60"
-                }`}
+            <button
+              onClick={() => setTab("itineraries")}
+              className={`px-4 py-3 flex-1 text-center font-medium transition border-b-2 ${
+              tab === "itineraries"
+                ? "border-primary text-primary dark:text-primary bg-primary/5 dark:bg-primary/15"
+                : "border-transparent text-muted-foreground hover:text-primary dark:hover:text-primary"
+              }`}
               >
-                Itineraries
-              </button>
+              Itineraries
+          </button>
             </div>
 
             {tab === "journals" && (

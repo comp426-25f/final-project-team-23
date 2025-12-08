@@ -109,6 +109,10 @@
   --sidebar-ring: oklch(0.552 0.016 285.938);
 }
 
+.dark .text-muted-foreground {
+  color: #e2e8f0 !important; /* bright cool gray */
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

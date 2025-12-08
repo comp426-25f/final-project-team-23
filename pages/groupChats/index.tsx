@@ -82,11 +82,11 @@ export default function GroupChatsIndexPage() {
   <div className="min-h-screen relative horizon-bg">
     <main className="mx-auto w-full max-w-6xl px-6 py-12 flex flex-col gap-8">
 
-      <Card className="bg-white/80 border border-white/40 rounded-2xl shadow-xl backdrop-blur-sm">
+      <Card className="bg-white/80 dark:bg-slate-900/40 border border-white/40 dark:border-slate-700 rounded-2xl shadow-xl backdrop-blur-sm">
         <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4">
           <Button
             variant="ghost"
-            className="px-0 hover:bg-transparent text-muted-foreground hover:text-[#0A2A43]"
+            className="px-0 hover:bg-transparent text-muted-foreground dark:text-gray-200 hover:text-[#0A2A43] dark:hover:text-gray-100"
             onClick={() => router.push("/friends")}
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -97,7 +97,7 @@ export default function GroupChatsIndexPage() {
             <CardTitle className="text-3xl md:text-4xl font-black text-[#0A2A43] tracking-tight">
               Group Chats
             </CardTitle>
-            <p className="mt-2 text-sm md:text-base text-gray-600 max-w-xl">
+            <p className="mt-2 text-sm md:text-base text-gray-600 dark:text-gray-200 max-w-xl">
               Start a new group or jump back into conversations with your travel crew.
             </p>
           </div>
@@ -114,11 +114,11 @@ export default function GroupChatsIndexPage() {
       </Card>
 
       {isCreating && (
-        <Card className="bg-white/80 border border-white/40 rounded-2xl shadow-md backdrop-blur-sm">
+        <Card className="bg-white/80 dark:bg-slate-900/40 border border-white/40 dark:border-slate-700 rounded-2xl shadow-xl backdrop-blur-sm">
           <CardContent className="space-y-4 py-4">
             <form onSubmit={handleCreate} className="space-y-4">
               <div>
-                <label className="mb-1 block text-sm font-medium">
+                <label className="mb-1 block text-sm font-medium text-[#0A2A43] dark:text-gray-100">
                   Group chat name
                 </label>
                 <Input
@@ -129,15 +129,15 @@ export default function GroupChatsIndexPage() {
               </div>
 
               <div>
-                <label className="mb-1 block text-sm font-medium">
+                <label className="mb-1 block text-sm font-medium text-[#0A2A43] dark:text-gray-100">
                   Add friends
                 </label>
                 {friendsLoading ? (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground dark:text-gray-300">
                     Loading friends...
                   </p>
                 ) : !friends || friends.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-muted-foreground dark:text-gray-300">
                     You aren&apos;t following anyone yet.
                   </p>
                 ) : (
@@ -191,9 +191,9 @@ export default function GroupChatsIndexPage() {
         </Card>
       )}
 
-      <Card className="bg-white/80 border border-white/40 rounded-2xl shadow-md backdrop-blur-sm">
+      <Card className="bg-white/80 dark:bg-slate-900/40 border border-white/40 dark:border-slate-700 rounded-2xl shadow-xl backdrop-blur-sm">
         <CardContent className="space-y-3 py-4">
-          <h2 className="text-lg font-semibold text-[#0A2A43]">
+          <h2 className="text-lg font-semibold text-[#0A2A43] dark:text-white">
             Your group chats
           </h2>
           {chatsLoading ? (
@@ -212,8 +212,8 @@ export default function GroupChatsIndexPage() {
                   href={`/groupChats/${chat.id}`}
                   className="block"
                 >
-                  <div className="flex items-center justify-between rounded-xl border border-slate-200 px-3 py-2 bg-white/70 hover:bg-[#0A2A43]/5 transition">
-                    <span className="font-medium text-[#0A2A43]">
+                  <div className="flex items-center justify-between rounded-xl border border-slate-200 dark:border-slate-700 px-3 py-2 bg-white/70 dark:bg-slate-900/70 hover:bg-[#0A2A43]/5 dark:hover:bg-slate-800/80 transition">
+                    <span className="font-medium text-[#0A2A43] dark:text-white">
                       {chat.name}
                     </span>
                   </div>
