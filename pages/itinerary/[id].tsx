@@ -9,6 +9,7 @@ import { useRouter } from "next/router";
 import { format } from "date-fns";
 import { User } from "@supabase/supabase-js";
 
+
 type ItineraryPageProps = {
   user: User;
 };
@@ -22,8 +23,9 @@ export default function ItineraryPage({ }: ItineraryPageProps) {
 
   if (isLoading || !itinerary) {
     return (
-      <div className="flex w-full justify-center pt-20">
-        <p className="text-muted-foreground">Loading itinerary…</p>
+      <div className="min-h-screen relative horizon-bg">
+        <main className="mx-auto w-full max-w-6xl px-6 py-12 flex items-center justify-center"></main>
+          <p className="text-muted-foreground">Loading itinerary…</p>
       </div>
     );
   }
@@ -35,8 +37,8 @@ export default function ItineraryPage({ }: ItineraryPageProps) {
   const localEnd = new Date(end.getTime() + end.getTimezoneOffset() * 60000);
 
   return (
-    <div className="flex w-full flex-row justify-center px-3">
-      <div className="mt-4 mb-12 w-full md:w-[700px]">
+    <div className="min-h-screen relative horizon-bg">
+      <main className="mx-auto w-full max-w-6xl px-6 py-12 flex flex-col gap-8">
 
         <div className="pb-3">
           <Button variant="ghost" onClick={() => router.back()}>
@@ -128,7 +130,7 @@ export default function ItineraryPage({ }: ItineraryPageProps) {
               </Card>
             ))}
         </div>
-      </div>
+      </main>
     </div>
   );
 }
