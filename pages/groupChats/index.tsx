@@ -72,7 +72,7 @@ export default function GroupChatsIndexPage() {
   }
 
   return (
-    <div className="min-h-screen bg-muted/30">
+    <div className="min-h-screen relative horizon-bg">
       <main className="mx-auto flex max-w-3xl flex-col gap-4 p-4 md:p-8">
         <div className="flex items-center justify-between">
           <Button variant="ghost" onClick={() => router.push("/")}>
