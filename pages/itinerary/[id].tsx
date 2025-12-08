@@ -8,7 +8,8 @@ import { api } from "@/utils/trpc/api";
 import { useRouter } from "next/router";
 import { format } from "date-fns";
 import { User } from "@supabase/supabase-js";
-
+import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
+import { createSupabaseComponentClient } from "@/utils/supabase/clients/component";
 
 type ItineraryPageProps = {
   user: User;
@@ -18,14 +19,15 @@ export default function ItineraryPage({ }: ItineraryPageProps) {
   const router = useRouter();
   const itineraryId = router.query.id as string;
 
+  const supabase = createSupabaseComponentClient();
+
   const { data: itinerary, isLoading } =
     api.itineraries.getItinerary.useQuery({ itineraryId });
 
   if (isLoading || !itinerary) {
     return (
-      <div className="min-h-screen relative horizon-bg">
-        <main className="mx-auto w-full max-w-6xl px-6 py-12 flex items-center justify-center"></main>
-          <p className="text-muted-foreground">Loading itinerary…</p>
+      <div className="flex w-full justify-center pt-20">
+        <p className="text-muted-foreground">Loading itinerary…</p>
       </div>
     );
   }
@@ -35,10 +37,15 @@ export default function ItineraryPage({ }: ItineraryPageProps) {
 
   const end = new Date(itinerary.endDate);
   const localEnd = new Date(end.getTime() + end.getTimezoneOffset() * 60000);
+  const author = itinerary.author;
+
+  const avatarUrl = author.avatarUrl
+    ? supabase.storage.from("avatars").getPublicUrl(author.avatarUrl).data.publicUrl
+    : undefined;
 
   return (
-    <div className="min-h-screen relative horizon-bg">
-      <main className="mx-auto w-full max-w-6xl px-6 py-12 flex flex-col gap-8">
+    <div className="flex w-full flex-row justify-center px-3">
+      <div className="mt-4 mb-12 w-full md:w-[700px]">
 
         <div className="pb-3">
           <Button variant="ghost" onClick={() => router.back()}>
@@ -50,6 +57,34 @@ export default function ItineraryPage({ }: ItineraryPageProps) {
           <h1 className="text-3xl font-bold text-primary mb-3">
             {itinerary.title}
           </h1>
+
+          {author && (
+            <div className="flex items-center gap-3">
+    <Avatar className="h-10 w-10 rounded-full overflow-hidden">
+      <AvatarImage
+        src={avatarUrl}
+        className="h-full w-full object-cover"
+      />
+
+      <AvatarFallback className="h-full w-full rounded-full bg-gray-200 text-primary flex items-center justify-center">
+       {author.displayName.slice(0, 2).toUpperCase()}
+            </AvatarFallback>
+          </Avatar>
+
+              <div className="flex flex-col leading-tight">
+                <span className="font-medium text-primary">
+                  {author.displayName}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  @{author.username}
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  Creator of this itinerary
+                </span>
+              </div>
+            </div>
+          )}
+
 
           {itinerary.destination && (
             <div className="flex items-center gap-2 text-muted-foreground mb-2">
@@ -130,7 +165,7 @@ export default function ItineraryPage({ }: ItineraryPageProps) {
               </Card>
             ))}
         </div>
-      </main>
+      </div>
     </div>
   );
 }
