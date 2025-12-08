@@ -1002,7 +1002,7 @@ function GetDays({
             >
               <CardHeader>
                 <div className="flex flex-row items-center justify-between">
-                  <h2 className="dark: font-semibold text-[#0A2A43] text-white">
+                  <h2 className="text-sm font-semibold text-[#0A2A43] dark:text-white">
                     Day {day.dayNumber}
                   </h2>
                   <DropdownMenu>

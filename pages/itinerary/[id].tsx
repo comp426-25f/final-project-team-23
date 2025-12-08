@@ -107,7 +107,7 @@ export default function ItineraryPage({}: ItineraryPageProps) {
             .sort((a, b) => a.dayNumber - b.dayNumber)
             .map((day) => (
               <Card key={day.id} className="rounded-2xl bg-white p-5 shadow-sm">
-                <h2 className="text-primary text-xl font-bold">
+                <h2 className="text-xl font-bold text-[#0A2A43] dark:text-white">
                   Day {day.dayNumber}
                 </h2>
 
