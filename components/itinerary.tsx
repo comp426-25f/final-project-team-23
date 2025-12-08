@@ -70,7 +70,7 @@ export default function ItineraryPreviewCard({ itinerary }: ItineraryPreviewCard
         {itinerary.destination && (
           <div className="flex items-center gap-2 text-muted-foreground text-sm">
             <MapPin className="h-4 w-4" />
-            <span className="font-medium">{itinerary.destination.name}</span>,{" "}
+            {itinerary.destination.name},{" "}
             {itinerary.destination.country}
           </div>
         )}
