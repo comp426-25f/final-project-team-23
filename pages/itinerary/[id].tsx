@@ -15,14 +15,15 @@ type ItineraryPageProps = {
   user: User;
 };
 
-export default function ItineraryPage({ }: ItineraryPageProps) {
+export default function ItineraryPage({}: ItineraryPageProps) {
   const router = useRouter();
   const itineraryId = router.query.id as string;
 
   const supabase = createSupabaseComponentClient();
 
-  const { data: itinerary, isLoading } =
-    api.itineraries.getItinerary.useQuery({ itineraryId });
+  const { data: itinerary, isLoading } = api.itineraries.getItinerary.useQuery({
+    itineraryId,
+  });
 
   if (isLoading || !itinerary) {
     return (
@@ -33,70 +34,71 @@ export default function ItineraryPage({ }: ItineraryPageProps) {
   }
 
   const start = new Date(itinerary.startDate);
-  const localStart = new Date(start.getTime() + start.getTimezoneOffset() * 60000);
+  const localStart = new Date(
+    start.getTime() + start.getTimezoneOffset() * 60000,
+  );
 
   const end = new Date(itinerary.endDate);
   const localEnd = new Date(end.getTime() + end.getTimezoneOffset() * 60000);
   const author = itinerary.author;
 
   const avatarUrl = author.avatarUrl
-    ? supabase.storage.from("avatars").getPublicUrl(author.avatarUrl).data.publicUrl
+    ? supabase.storage.from("avatars").getPublicUrl(author.avatarUrl).data
+        .publicUrl
     : undefined;
 
   return (
     <div className="flex w-full flex-row justify-center px-3">
       <div className="mt-4 mb-12 w-full md:w-[700px]">
-
         <div className="pb-3">
           <Button variant="ghost" onClick={() => router.back()}>
             <ArrowLeft className="mr-1" /> Back to Feed
           </Button>
         </div>
 
-        <Card className="p-6 rounded-2xl shadow-sm mb-6">
-          <h1 className="text-3xl font-bold text-primary mb-3">
+        <Card className="mb-6 rounded-2xl p-6 shadow-sm">
+          <h1 className="text-primary mb-3 text-3xl font-bold">
             {itinerary.title}
           </h1>
 
           {author && (
             <div className="flex items-center gap-3">
-    <Avatar className="h-10 w-10 rounded-full overflow-hidden">
-      <AvatarImage
-        src={avatarUrl}
-        className="h-full w-full object-cover"
-      />
+              <Avatar className="h-10 w-10 overflow-hidden rounded-full">
+                <AvatarImage
+                  src={avatarUrl}
+                  className="h-full w-full object-cover"
+                />
 
-      <AvatarFallback className="h-full w-full rounded-full bg-gray-200 text-primary flex items-center justify-center">
-       {author.displayName.slice(0, 2).toUpperCase()}
-            </AvatarFallback>
-          </Avatar>
+                <AvatarFallback className="text-primary flex h-full w-full items-center justify-center rounded-full bg-gray-200">
+                  {author.displayName.slice(0, 2).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
 
               <div className="flex flex-col leading-tight">
-                <span className="font-medium text-primary">
+                <span className="text-primary font-medium">
                   {author.displayName}
                 </span>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-muted-foreground text-xs">
                   @{author.username}
                 </span>
-                <span className="text-xs text-muted-foreground">
+                <span className="text-muted-foreground text-xs">
                   Creator of this itinerary
                 </span>
               </div>
             </div>
           )}
 
-
           {itinerary.destination && (
-            <div className="flex items-center gap-2 text-muted-foreground mb-2">
+            <div className="text-muted-foreground mb-2 flex items-center gap-2">
               <MapPin className="h-4 w-4" />
-                {itinerary.destination.name}
-              , {itinerary.destination.country}
+              {itinerary.destination.name}, {itinerary.destination.country}
             </div>
           )}
 
-          <div className="flex items-center gap-2 text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-2">
             <Calendar className="h-4 w-4" />
-            {format(localStart, "MMM d, yyyy")} → {format(localEnd, "MMM d, yyyy")}
+            {format(localStart, "MMM d, yyyy")} →{" "}
+            {format(localEnd, "MMM d, yyyy")}
           </div>
         </Card>
 
@@ -104,25 +106,27 @@ export default function ItineraryPage({ }: ItineraryPageProps) {
           {itinerary.days
             .sort((a, b) => a.dayNumber - b.dayNumber)
             .map((day) => (
-              <Card key={day.id} className="p-5 rounded-2xl bg-white shadow-sm">
-                <h2 className="text-xl font-bold text-primary">
+              <Card key={day.id} className="rounded-2xl bg-white p-5 shadow-sm">
+                <h2 className="text-primary text-xl font-bold">
                   Day {day.dayNumber}
                 </h2>
 
                 {day.notes && (
-                  <p className="mt-1 text-muted-foreground">{day.notes}</p>
+                  <p className="text-muted-foreground mt-1">{day.notes}</p>
                 )}
 
                 <Separator className="my-4" />
 
                 <div className="flex flex-col gap-4">
                   {day.activities
-                    .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime())
+                    .sort(
+                      (a, b) =>
+                        new Date(a.time).getTime() - new Date(b.time).getTime(),
+                    )
                     .map((activity) => (
                       <div key={activity.id} className="flex flex-col gap-1">
-
                         <div className="flex items-center gap-2 font-medium">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          <Clock className="text-muted-foreground h-4 w-4" />
 
                           <span className="text-primary font-semibold">
                             {format(new Date(activity.time), "h:mm a")}
@@ -132,33 +136,22 @@ export default function ItineraryPage({ }: ItineraryPageProps) {
                         </div>
 
                         {activity.category && (
-    <span
-      className="
-        px-2 py-0.5
-        text-xs font-semibold
-        rounded-full
-        bg-[#ffb88c]/20
-        text-[#ffb88c]
-        border border-[#ffb88c]/40
-        w-fit
-      "
-    >
-      {activity.category}
-    </span>
-  )}
+                          <span className="w-fit rounded-full border border-[#ffb88c]/40 bg-[#ffb88c]/20 px-2 py-0.5 text-xs font-semibold text-[#ffb88c]">
+                            {activity.category}
+                          </span>
+                        )}
 
                         {activity.location && (
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-muted-foreground text-sm">
                             {activity.location}
                           </p>
                         )}
 
                         {activity.description && (
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-muted-foreground text-sm">
                             {activity.description}
                           </p>
                         )}
-
                       </div>
                     ))}
                 </div>

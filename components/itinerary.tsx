@@ -25,7 +25,9 @@ type ItineraryPreviewCardProps = {
   itinerary: z.infer<typeof ItineraryPreview>;
 };
 
-export default function ItineraryPreviewCard({ itinerary }: ItineraryPreviewCardProps) {
+export default function ItineraryPreviewCard({
+  itinerary,
+}: ItineraryPreviewCardProps) {
   const supabase = createSupabaseComponentClient();
 
   const start = new Date(itinerary.startDate);
@@ -33,59 +35,58 @@ export default function ItineraryPreviewCard({ itinerary }: ItineraryPreviewCard
 
   const numDays = Math.max(
     1,
-    Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+    Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)),
   );
 
   const author = itinerary.author;
   const avatarUrl = author.avatarUrl
-    ? supabase.storage.from("avatars").getPublicUrl(author.avatarUrl).data.publicUrl
+    ? supabase.storage.from("avatars").getPublicUrl(author.avatarUrl).data
+        .publicUrl
     : undefined;
 
   return (
     <Link href={`/itinerary/${itinerary.id}`} className="group block w-full">
-      <div className="rounded-2xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition p-5 flex flex-col gap-4">
-
+      <div className="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:shadow-md">
         <div className="flex items-center gap-3">
-          <Avatar className="h-10 w-10 rounded-full overflow-hidden shrink-0">
+          <Avatar className="h-10 w-10 shrink-0 overflow-hidden rounded-full">
             <AvatarImage src={avatarUrl} className="object-cover" />
-            <AvatarFallback className="bg-gray-200 text-primary">
+            <AvatarFallback className="text-primary bg-gray-200">
               {author.displayName.slice(0, 2).toUpperCase()}
             </AvatarFallback>
           </Avatar>
 
           <div className="flex flex-col leading-tight">
-            <span className="font-medium text-primary">
+            <span className="text-primary font-medium">
               {author.displayName}
             </span>
-            <span className="text-xs text-muted-foreground">
+            <span className="text-muted-foreground text-xs">
               @{author.username}
             </span>
           </div>
         </div>
 
-        <h2 className="text-xl font-bold text-primary group-hover:underline">
+        <h2 className="text-primary text-xl font-bold group-hover:underline">
           {itinerary.title}
         </h2>
 
         {itinerary.destination && (
-          <div className="flex items-center gap-2 text-muted-foreground text-sm">
+          <div className="text-muted-foreground flex items-center gap-2 text-sm">
             <MapPin className="h-4 w-4" />
-            {itinerary.destination.name},{" "}
-            {itinerary.destination.country}
+            {itinerary.destination.name}, {itinerary.destination.country}
           </div>
         )}
 
-        <div className="flex items-center gap-2 text-muted-foreground text-sm">
+        <div className="text-muted-foreground flex items-center gap-2 text-sm">
           <Calendar className="h-4 w-4" />
           {start.toLocaleDateString()} → {end.toLocaleDateString()}
         </div>
 
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           <span className="font-semibold">{numDays}</span>{" "}
           {numDays === 1 ? "Day" : "Days"}
         </p>
 
-        <div className="flex items-center gap-1 text-primary text-sm font-medium group-hover:underline mt-2">
+        <div className="text-primary mt-2 flex items-center gap-1 text-sm font-medium group-hover:underline">
           View itinerary
           <ExternalLink className="h-4 w-4" />
         </div>

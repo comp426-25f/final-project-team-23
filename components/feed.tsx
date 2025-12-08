@@ -27,7 +27,6 @@ export default function PostFeed({
         posts.pages.map((page) => {
           return page.map((post, postIndex) => (
             <Fragment key={`post_${post.id}`}>
-              
               {postIndex === 20 && (
                 <InView onChange={(inView) => inView && fetchNext()}></InView>
               )}

@@ -52,20 +52,20 @@ export default function SignUpPage() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-6 overflow-hidden horizon-bg">
+    <div className="horizon-bg relative flex min-h-screen items-center justify-center overflow-hidden p-6">
       <div className="absolute top-10 right-24 z-0">
-        <Cloud className="w-36 h-36 fill-white text-white opacity-80 blur-[2px]" />
+        <Cloud className="h-36 w-36 fill-white text-white opacity-80 blur-[2px]" />
       </div>
       <div className="absolute top-25 left-30 z-0">
-        <Cloud className="w-44 h-44 fill-white text-white opacity-75 blur-[3px]" />
+        <Cloud className="h-44 w-44 fill-white text-white opacity-75 blur-[3px]" />
       </div>
-      <div className="absolute bottom-0 right-0 z-10 pointer-events-none translate-x-[30%] translate-y-[30%]">
-        <Globe2 className="w-[600px] h-[600px] text-[#4ab5ff] opacity-30 blur-[6px]" />
+      <div className="pointer-events-none absolute right-0 bottom-0 z-10 translate-x-[30%] translate-y-[30%]">
+        <Globe2 className="h-[600px] w-[600px] text-[#4ab5ff] opacity-30 blur-[6px]" />
       </div>
 
-      <div className="relative z-10 w-full max-w-sm bg-white/70 dark:bg-slate-900/80 backdrop-blur-xl rounded-2xl shadow-xl border border-white/30 dark:border-slate-800 p-8">
-        <div className="flex flex-col items-center text-center mb-8">
-          <div className="h-12 w-12 flex items-center justify-center rounded-full bg-primary/10 text-primary mb-2">
+      <div className="relative z-10 w-full max-w-sm rounded-2xl border border-white/30 bg-white/70 p-8 shadow-xl backdrop-blur-xl dark:border-slate-800 dark:bg-slate-900/80">
+        <div className="mb-8 flex flex-col items-center text-center">
+          <div className="bg-primary/10 text-primary mb-2 flex h-12 w-12 items-center justify-center rounded-full">
             <Globe2 className="h-6 w-6" />
           </div>
 
@@ -77,11 +77,11 @@ export default function SignUpPage() {
             Create your account
           </h2>
 
-          <p className="text-muted-foreground dark:text-slate-300 text-sm mt-2 font-medium">
+          <p className="text-muted-foreground mt-2 text-sm font-medium dark:text-slate-300">
             Join a community of travelers exploring the world.
           </p>
 
-          <p className="text-sm mt-1 font-medium text-slate-800 dark:text-slate-200">
+          <p className="mt-1 text-sm font-medium text-slate-800 dark:text-slate-200">
             Already have an account?{" "}
             <Link href="/login" className="text-primary underline">
               Log in here
@@ -99,7 +99,7 @@ export default function SignUpPage() {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="rounded-xl border-white/50 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 shadow-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+              className="rounded-xl border-white/50 bg-white/70 text-slate-900 shadow-sm placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-100 dark:placeholder:text-slate-500"
             />
           </div>
 
@@ -111,7 +111,7 @@ export default function SignUpPage() {
               placeholder="Jane Doe"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="rounded-xl border-white/50 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 shadow-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+              className="rounded-xl border-white/50 bg-white/70 text-slate-900 shadow-sm placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-100 dark:placeholder:text-slate-500"
             />
           </div>
 
@@ -120,9 +120,9 @@ export default function SignUpPage() {
               Handle
             </Label>
             <div className="relative">
-              <AtSign className="absolute left-2 top-3 h-4 w-4 text-gray-500 dark:text-slate-400" />
+              <AtSign className="absolute top-3 left-2 h-4 w-4 text-gray-500 dark:text-slate-400" />
               <Input
-                className="pl-8 rounded-xl border-white/50 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 shadow-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                className="rounded-xl border-white/50 bg-white/70 pl-8 text-slate-900 shadow-sm placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-100 dark:placeholder:text-slate-500"
                 placeholder="jane"
                 value={handle}
                 onChange={(e) => setHandle(e.target.value)}
@@ -139,11 +139,14 @@ export default function SignUpPage() {
               placeholder="Create a password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="rounded-xl border-white/50 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 shadow-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500"
+              className="rounded-xl border-white/50 bg-white/70 text-slate-900 shadow-sm placeholder:text-slate-400 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-100 dark:placeholder:text-slate-500"
             />
           </div>
 
-          <Button className="w-full py-6 rounded-xl text-lg font-bold shadow-md mt-2" onClick={signUp}>
+          <Button
+            className="mt-2 w-full rounded-xl py-6 text-lg font-bold shadow-md"
+            onClick={signUp}
+          >
             Sign Up
           </Button>
         </div>

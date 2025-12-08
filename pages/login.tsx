@@ -42,28 +42,27 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center p-6 overflow-hidden horizon-bg">
-    <div className="absolute top-10 right-24 z-0">
-      <Cloud className="w-36 h-36 fill-white text-white opacity-80 blur-[2px]" />
-    </div>
-    <div className="absolute top-25 left-30 z-0">
-      <Cloud className="w-44 h-44 fill-white text-white opacity-75 blur-[3px]" />
-    </div>
+    <div className="horizon-bg relative flex min-h-screen items-center justify-center overflow-hidden p-6">
+      <div className="absolute top-10 right-24 z-0">
+        <Cloud className="h-36 w-36 fill-white text-white opacity-80 blur-[2px]" />
+      </div>
+      <div className="absolute top-25 left-30 z-0">
+        <Cloud className="h-44 w-44 fill-white text-white opacity-75 blur-[3px]" />
+      </div>
 
-    <div className="absolute bottom-0 right-0 z-10 pointer-events-none translate-x-[30%] translate-y-[30%]">
-      <Globe2 className="w-[600px] h-[600px] text-[#4ab5ff] opacity-30 blur-[6px]" />
-    </div>
+      <div className="pointer-events-none absolute right-0 bottom-0 z-10 translate-x-[30%] translate-y-[30%]">
+        <Globe2 className="h-[600px] w-[600px] text-[#4ab5ff] opacity-30 blur-[6px]" />
+      </div>
 
-      <div className="w-full max-w-sm bg-white/70 backdrop-blur-xl rounded-2xl shadow-xl border border-white/30 p-8 z-20">
-        
-        <div className="flex flex-col items-center text-center mb-6">
-          <div className="h-12 w-12 flex items-center justify-center rounded-full bg-primary/10 text-primary mb-2">
+      <div className="z-20 w-full max-w-sm rounded-2xl border border-white/30 bg-white/70 p-8 shadow-xl backdrop-blur-xl">
+        <div className="mb-6 flex flex-col items-center text-center">
+          <div className="bg-primary/10 text-primary mb-2 flex h-12 w-12 items-center justify-center rounded-full">
             <Globe2 className="h-6 w-6" />
           </div>
           <h1 className="text-4xl font-black tracking-tight text-[#0A2A43]">
             wandr<span className="text-primary">.</span>
           </h1>
-          <p className="text-sm text-muted-foreground mt-1 font-medium">
+          <p className="text-muted-foreground mt-1 text-sm font-medium">
             Log in to continue exploring the world.
           </p>
         </div>
@@ -76,7 +75,7 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="m@example.com"
               required
-              className="rounded-xl bg-white/60 border-white/40 shadow-sm focus:ring-primary"
+              className="focus:ring-primary rounded-xl border-white/40 bg-white/60 shadow-sm"
             />
           </div>
 
@@ -87,11 +86,14 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="rounded-xl bg-white/60 border-white/40 shadow-sm focus:ring-primary"
+              className="focus:ring-primary rounded-xl border-white/40 bg-white/60 shadow-sm"
             />
           </div>
 
-          <Button onClick={logIn} className="w-full py-5 rounded-xl font-bold shadow-md">
+          <Button
+            onClick={logIn}
+            className="w-full rounded-xl py-5 font-bold shadow-md"
+          >
             Login
           </Button>
 

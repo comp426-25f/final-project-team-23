@@ -28,8 +28,9 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
   const { data: profile, isLoading: profileLoading } =
     api.profiles.getProfile.useQuery({ profileId });
 
-  const { data: isFollowing } =
-    api.profiles.getIsUserFollowingProfile.useQuery({ profileId });
+  const { data: isFollowing } = api.profiles.getIsUserFollowingProfile.useQuery(
+    { profileId },
+  );
 
   const {
     data: postsPages,
@@ -39,15 +40,14 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
     { profileId },
     {
       initialCursor: 0,
-      getNextPageParam: (lastPage, pages) =>
-        pages.length * lastPage.length,
+      getNextPageParam: (lastPage, pages) => pages.length * lastPage.length,
     },
   );
 
   const { data: itineraries, isLoading: itinerariesLoading } =
     api.itineraries.getUserItineraries.useQuery(
-  { userId: profileId },
-  { enabled: tab === "itineraries" }
+      { userId: profileId },
+      { enabled: tab === "itineraries" },
     );
 
   const { mutate: toggleFollowing } =
@@ -82,15 +82,15 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
               setSelectedFile(null);
               apiUtils.invalidate();
             },
-          }
+          },
         );
       });
     }
   }, [apiUtils, selectedFile, supabase, updateProfilePicture, user]);
 
   return (
-    <div className="min-h-screen relative horizon-bg">
-      <main className="mx-auto w-full max-w-6xl px-6 py-12 flex flex-col gap-8">
+    <div className="horizon-bg relative min-h-screen">
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-12">
         <div className="pb-3">
           <Button
             variant="ghost"
@@ -102,8 +102,8 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
         </div>
 
         {profile && (
-          <Card className="bg-white rounded-2xl shadow-md border border-gray-100">
-            <CardContent className="py-6 px-6">
+          <Card className="rounded-2xl border border-gray-100 bg-white shadow-md">
+            <CardContent className="px-6 py-6">
               <div className="flex w-full items-center justify-between gap-6">
                 <div className="flex items-center gap-4">
                   <Avatar className="h-16 w-16">
@@ -122,7 +122,7 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
                   </Avatar>
 
                   <div>
-                    <h1 className="text-4xl md:text-5xl font-black text-[#0A2A43] tracking-tight">
+                    <h1 className="text-4xl font-black tracking-tight text-[#0A2A43] md:text-5xl">
                       {profile.displayName}
                     </h1>
                     <p className="mt-1 text-base font-medium text-gray-700">
@@ -135,7 +135,7 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
                   <Button
                     variant={isFollowing ? "secondary" : "default"}
                     onClick={followButtonPressed}
-                    className="h-auto px-5 py-3 rounded-xl font-semibold flex items-center gap-2"
+                    className="flex h-auto items-center gap-2 rounded-xl px-5 py-3 font-semibold"
                   >
                     {isFollowing ? <BellOff /> : <Bell />}
                     {isFollowing ? "Unfollow" : "Follow"}
@@ -173,7 +173,7 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
                         onClick={() => {
                           fileInputRef.current?.click();
                         }}
-                        className="h-auto px-5 py-3 rounded-xl font-semibold flex items-center gap-2"
+                        className="flex h-auto items-center gap-2 rounded-xl px-5 py-3 font-semibold"
                       >
                         <ImageUp className="h-5 w-5" /> Change Avatar
                       </Button>
@@ -185,37 +185,37 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
         )}
 
         {profileLoading && (
-          <Card className="bg-white rounded-2xl shadow-md border border-gray-100">
+          <Card className="rounded-2xl border border-gray-100 bg-white shadow-md">
             <CardContent className="py-6">
               <Loading />
             </CardContent>
           </Card>
         )}
 
-        <Card className="mt-2 w-full bg-white rounded-2xl shadow-md border border-gray-100">
+        <Card className="mt-2 w-full rounded-2xl border border-gray-100 bg-white shadow-md">
           <CardContent className="p-0">
-            <div className="flex border-b rounded-t-2xl overflow-hidden">
+            <div className="flex overflow-hidden rounded-t-2xl border-b">
               <button
                 onClick={() => setTab("journals")}
-                className={`px-4 py-3 flex-1 text-center font-medium transition border-b-2 ${
-                tab === "journals"
-                  ? "border-primary text-primary dark:text-primary bg-primary/5 dark:bg-primary/15"
-                  : "border-transparent text-muted-foreground hover:text-primary dark:hover:text-primary"
-              }`}
+                className={`flex-1 border-b-2 px-4 py-3 text-center font-medium transition ${
+                  tab === "journals"
+                    ? "border-primary text-primary dark:text-primary bg-primary/5 dark:bg-primary/15"
+                    : "text-muted-foreground hover:text-primary dark:hover:text-primary border-transparent"
+                }`}
               >
-              Journals
-            </button>
+                Journals
+              </button>
 
-            <button
-              onClick={() => setTab("itineraries")}
-              className={`px-4 py-3 flex-1 text-center font-medium transition border-b-2 ${
-              tab === "itineraries"
-                ? "border-primary text-primary dark:text-primary bg-primary/5 dark:bg-primary/15"
-                : "border-transparent text-muted-foreground hover:text-primary dark:hover:text-primary"
-              }`}
+              <button
+                onClick={() => setTab("itineraries")}
+                className={`flex-1 border-b-2 px-4 py-3 text-center font-medium transition ${
+                  tab === "itineraries"
+                    ? "border-primary text-primary dark:text-primary bg-primary/5 dark:bg-primary/15"
+                    : "text-muted-foreground hover:text-primary dark:hover:text-primary border-transparent"
+                }`}
               >
-              Itineraries
-          </button>
+                Itineraries
+              </button>
             </div>
 
             {tab === "journals" && (
@@ -230,7 +230,7 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
                     fetchNext={fetchNextPage}
                   />
                 ) : (
-                  <div className="text-center text-muted-foreground py-10">
+                  <div className="text-muted-foreground py-10 text-center">
                     No posts yet.
                   </div>
                 )}
@@ -242,11 +242,11 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
                 {itinerariesLoading ? (
                   <Loading />
                 ) : !itineraries || itineraries.length === 0 ? (
-                  <div className="text-center text-muted-foreground py-10">
+                  <div className="text-muted-foreground py-10 text-center">
                     No itineraries yet.
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                     {itineraries.map((it) => (
                       <ItineraryPreviewCard key={it.id} itinerary={it} />
                     ))}
@@ -260,7 +260,6 @@ export default function PublicProfilePage({ user }: PublicProfilePageProps) {
     </div>
   );
 }
-
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   const supabase = createSupabaseServerClient(context);

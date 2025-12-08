@@ -38,14 +38,14 @@ export default function PostCard({ user, post }: PostCardProps) {
   const { mutate: toggleLike } = api.posts.toggleLike.useMutation();
 
   return (
-    <div className="w-fit h-fit flex flex-row gap-3 p-6 bg-white dark:bg-slate-900/80  rounded-2xl shadow-md border border-gray-100 dark:border-slate-700">
+    <div className="flex h-fit w-fit flex-row gap-3 rounded-2xl border border-gray-100 bg-white p-6 shadow-md dark:border-slate-700 dark:bg-slate-900/80">
       <Avatar className="mt-1">
         <AvatarImage
           src={
             post.author.avatarUrl
               ? supabase.storage
-                .from("avatars")
-                .getPublicUrl(post.author.avatarUrl).data.publicUrl
+                  .from("avatars")
+                  .getPublicUrl(post.author.avatarUrl).data.publicUrl
               : undefined
           }
         />
@@ -59,7 +59,7 @@ export default function PostCard({ user, post }: PostCardProps) {
             href={`/profile/${post.author.id}`}
             className="flex flex-row items-center"
           >
-            <p className="text-primary dark:text-slate-100 font-bold hover:underline">
+            <p className="text-primary font-bold hover:underline dark:text-slate-100">
               {post.author.displayName}
             </p>
             <p className="text-muted-foreground ml-3 hover:underline">
@@ -82,8 +82,9 @@ export default function PostCard({ user, post }: PostCardProps) {
               }}
             >
               <p
-                className={`text-sm ${isLiked ? "text-pink-600" : "text-muted-foreground"
-                  }`}
+                className={`text-sm ${
+                  isLiked ? "text-pink-600" : "text-muted-foreground"
+                }`}
               >
                 {numberOfLikes + (isLiked ? 1 : 0)}
               </p>
@@ -101,7 +102,7 @@ export default function PostCard({ user, post }: PostCardProps) {
           </div>
         </div>
         {post.destination && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             📍 <span className="font-medium">{post.destination.name}</span>,{" "}
             {post.destination.country}
           </p>
@@ -111,8 +112,9 @@ export default function PostCard({ user, post }: PostCardProps) {
             <Image
               className="rounded-xl"
               src={
-                supabase.storage.from("post-images").getPublicUrl(post.attachmentUrl)
-                  .data.publicUrl
+                supabase.storage
+                  .from("post-images")
+                  .getPublicUrl(post.attachmentUrl).data.publicUrl
               }
               alt="Image"
               width={600}

@@ -13,7 +13,9 @@ type PostPageProps = { user: Subject };
 export default function PostPage({ user }: PostPageProps) {
   const router = useRouter();
   const postId = router.query.id as string;
-  const { data: post } = api.posts.getPost.useQuery({ postId: postId.toString() });
+  const { data: post } = api.posts.getPost.useQuery({
+    postId: postId.toString(),
+  });
 
   return (
     <div className="flex w-full flex-row justify-center px-3">

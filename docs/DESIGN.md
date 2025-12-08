@@ -4,7 +4,7 @@
 
 ## Feature Plan
 
-*Replace this with your feature plan. Write a bit more detail under each heading from before (description, user, purpose). Also, add a fourth section to each with some technical notes on how you may implement each feature and any other backend or frontend notes you may need.*
+_Replace this with your feature plan. Write a bit more detail under each heading from before (description, user, purpose). Also, add a fourth section to each with some technical notes on how you may implement each feature and any other backend or frontend notes you may need._
 
 ### Feature 1: AI Trip Planner
 
@@ -22,41 +22,41 @@
 
 **User(s):** This feature is important for users who like to travel with and plan trips with their friends. It is for groups and individuals who want to be organized before or during their trip by ensuring everyone on their trip is on the same page and has access to the itinerary. It also gives everyone in the group an opportunity to give their input on activities to do on the trip. This feature can also be for a single traveler to edit his/her own itinerary in-app.
 
-**Purpose:** This feature is significant for target users because it helps to keep everyone in the group organized and allows everyone to give their input as an itinerary is edited or created. Ideally, all travelers on a trip would have access to this itinerary to plan beforehand, look at throughout their trip, and change as needed before or during a trip. It is very convenient for the whole group to have the itinerary in-app and easily accessible at the touch of a button. 
+**Purpose:** This feature is significant for target users because it helps to keep everyone in the group organized and allows everyone to give their input as an itinerary is edited or created. Ideally, all travelers on a trip would have access to this itinerary to plan beforehand, look at throughout their trip, and change as needed before or during a trip. It is very convenient for the whole group to have the itinerary in-app and easily accessible at the touch of a button.
 
 **Technical Notes:** This feature will be implemented using Postgres changes as users edit the itinerary, with realtime changes synced to our DB so all users can see the most recent version of an itinerary. The presence realtime method can also be utilized to see which travelers are active on a document at any point in time. In the backend, we would need to utilize our itinerary table, itinerary days, and activities, as well as the itinerary collaborators and user profiles, to figure out which users are authorized to edit and collaborate on an itinerary. In the frontend, we would need to have an interface that looks like a text document, along with user profiles visible depending on who is actively viewing the document.
 
 ### Feature 3: Following Feed + Explore Travel Feed
 
-**Description:** The "Following Feed" displays an infinite list of trips, posts, journals, and photo galleries posted by the users that the current user elects to follow. The "Explore Travel Feed" showcases trending trips from the wider community, while also populating this feed with algorithmically sorted content specific to the current users interests to provide travel inspiration. 
+**Description:** The "Following Feed" displays an infinite list of trips, posts, journals, and photo galleries posted by the users that the current user elects to follow. The "Explore Travel Feed" showcases trending trips from the wider community, while also populating this feed with algorithmically sorted content specific to the current users interests to provide travel inspiration.
 
-**User(s):** This feature is for users who use the app for its social and discovery aspects. It is designed to peak curiosity in individuals seeking inspiration for their next trip or vacation, where their friends are headed, or connection with other users that align with their travel interests.   
+**User(s):** This feature is for users who use the app for its social and discovery aspects. It is designed to peak curiosity in individuals seeking inspiration for their next trip or vacation, where their friends are headed, or connection with other users that align with their travel interests.
 
-**Purpose:** This feature is vital for user engagement and retention by transforming the app from a simple planner into a sparkling travel community. By populating a continuous stream of inspiration, users are able to discover new places based on experiences of others, fostering connections rooted in shared curiosities.  
+**Purpose:** This feature is vital for user engagement and retention by transforming the app from a simple planner into a sparkling travel community. By populating a continuous stream of inspiration, users are able to discover new places based on experiences of others, fostering connections rooted in shared curiosities.
 
 **Technical Notes:** This feature will be implemented using the database, especially the key tables like posts, trips, users, and images. In addition to these tables, it will also rely on the join table, user_followings, which combines the tables: following and likes. The Explore Travel Feed algorithm will sort what content is displayed by querying posts with high engagement (ie number of likes) and that have been recently shared. The infinite scrolling will be implemented by paginating these results from the backend. Postgres will dynamically update changes like the like count or comment count on a post instantaneously in the UI while users interact with the feed.
 
 ### Feature 4: Post Travel Journals + Photos for Each Trip
 
-**Description:** Upon the conclusion of a trip, users can convert their itinerary into a shareable journal post. These journal posts are displayed on the user's public profile and are included in the Following and Explore Travel Feeds. This feature aims to enrich trip posts by uploading a photo gallery subjective to said trip, while allowing users to add comments about their experiences. 
+**Description:** Upon the conclusion of a trip, users can convert their itinerary into a shareable journal post. These journal posts are displayed on the user's public profile and are included in the Following and Explore Travel Feeds. This feature aims to enrich trip posts by uploading a photo gallery subjective to said trip, while allowing users to add comments about their experiences.
 
-**User(s):** This feature relates to users that want to memorialize their travels in photos and comments. Users are able to share their experiences and recommendations with their friends and wider community, creating a personal memento of their adventures. 
+**User(s):** This feature relates to users that want to memorialize their travels in photos and comments. Users are able to share their experiences and recommendations with their friends and wider community, creating a personal memento of their adventures.
 
-**Purpose:** This feature aims to transform cherished memories into a digital landscape where they live on forever. This feature increases engagement by encouraging users to return to the app and allow it to generate high quality content based on what the user feeds it. This content fuels the social feeds, connecting similar users to each other through their trip recaps. 
+**Purpose:** This feature aims to transform cherished memories into a digital landscape where they live on forever. This feature increases engagement by encouraging users to return to the app and allow it to generate high quality content based on what the user feeds it. This content fuels the social feeds, connecting similar users to each other through their trip recaps.
 
-**Technical Notes:** This feature will be implemented using the database and Supabase storage buckets. Specifically, the database will hold the table, journals, which references a trip id, user id, and fields for post trip comments. This table will have a one-to-many relationship with the table that references the gallery of images subjective to each trip. The high resolution images will be stored in buckets with the gallery images table storing secure URLs that link each photo to the respective journal post. 
+**Technical Notes:** This feature will be implemented using the database and Supabase storage buckets. Specifically, the database will hold the table, journals, which references a trip id, user id, and fields for post trip comments. This table will have a one-to-many relationship with the table that references the gallery of images subjective to each trip. The high resolution images will be stored in buckets with the gallery images table storing secure URLs that link each photo to the respective journal post.
 
 ### Feature 5: Travel Buddy Chats
 
-**Description:** This feature permits two types of chatting functionalities: private group channels and public destination channels. The private group channels permit user collaboration on shared trip itineraries in a dedicated space. The public channels are based on certain destinations that any user is able to join to gather data on specific locations other users have traveled to.  
+**Description:** This feature permits two types of chatting functionalities: private group channels and public destination channels. The private group channels permit user collaboration on shared trip itineraries in a dedicated space. The public channels are based on certain destinations that any user is able to join to gather data on specific locations other users have traveled to.
 
-**User(s):** This feature aims to serve a wide range of users by streamlining collaboration. This feature covers communication for group trips, solo travelers seeking tips on specific locations, and connecting companions with shared interests. 
+**User(s):** This feature aims to serve a wide range of users by streamlining collaboration. This feature covers communication for group trips, solo travelers seeking tips on specific locations, and connecting companions with shared interests.
 
-**Purpose:** This feature facilitates concise communication and community building, prioritizing collaboration within the traveling world. Due to this streamlined communication, users can rely solely on this app for trip coordination, providing platforms for gathering knowledge from experienced travelers which enhances the overall experience.  
+**Purpose:** This feature facilitates concise communication and community building, prioritizing collaboration within the traveling world. Due to this streamlined communication, users can rely solely on this app for trip coordination, providing platforms for gathering knowledge from experienced travelers which enhances the overall experience.
 
-**Technical Notes:** This feature will rely on Realtime, specifically Broadcast and Presence. The database will hold the table, chats, that define the structure of the chatroom/channel (ie private or public), and the table, messages, that stores sent messages. Broadcast channels will send messages from a user to all other users subscribed to that specific chat room instantly, which keeps the interactions quick and concise. Presence will track users online or offline status within specific chat rooms, updating the UI to reflect the active profiles within that subjective channel.  
+**Technical Notes:** This feature will rely on Realtime, specifically Broadcast and Presence. The database will hold the table, chats, that define the structure of the chatroom/channel (ie private or public), and the table, messages, that stores sent messages. Broadcast channels will send messages from a user to all other users subscribed to that specific chat room instantly, which keeps the interactions quick and concise. Presence will track users online or offline status within specific chat rooms, updating the UI to reflect the active profiles within that subjective channel.
 
-*Feel free to add more here if needed.*
+_Feel free to add more here if needed._
 
 ## Backend Database Schema
 

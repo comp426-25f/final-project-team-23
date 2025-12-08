@@ -14,27 +14,26 @@ import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 export default function FriendsFeedPage() {
   const { user, isLoading: authLoading } = useAuth();
 
-  const { data: posts, isLoading: postsLoading, } = api.posts.getFollowingFeed.useQuery({ cursor: 0 });
+  const { data: posts, isLoading: postsLoading } =
+    api.posts.getFollowingFeed.useQuery({ cursor: 0 });
 
   return (
-    <div className="min-h-screen relative horizon-bg">
-      <main className="mx-auto w-full max-w-6xl px-6 py-12 flex flex-col gap-8">
-
-
-        <Card className="bg-white rounded-2xl shadow-md border border-gray-100">
+    <div className="horizon-bg relative min-h-screen">
+      <main className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-12">
+        <Card className="rounded-2xl border border-gray-100 bg-white shadow-md">
           <CardHeader className="flex flex-row items-center justify-between gap-4 pb-2">
             <div>
-              <CardTitle className="text-4xl md:text-5xl font-black text-[#0A2A43] tracking-tight">
+              <CardTitle className="text-4xl font-black tracking-tight text-[#0A2A43] md:text-5xl">
                 Friends Feed
               </CardTitle>
 
-              <p className="mt-3 text-lg font-medium text-gray-700 leading-relaxed">
+              <p className="mt-3 text-lg leading-relaxed font-medium text-gray-700">
                 See what incredible trips your friends have been on!
               </p>
             </div>
 
             {user && (
-              <Button className="h-auto px-5 py-3 rounded-xl bg-[#0A2A43] text-white font-semibold shadow-md hover:bg-[#061829] transition">
+              <Button className="h-auto rounded-xl bg-[#0A2A43] px-5 py-3 font-semibold text-white shadow-md transition hover:bg-[#061829]">
                 <Link href="/new_post">Create Journal</Link>
               </Button>
             )}
@@ -43,11 +42,14 @@ export default function FriendsFeedPage() {
 
         {authLoading || postsLoading ? (
           <div className="flex justify-center py-20">
-            <Loader2 className="animate-spin h-10 w-10 text-primary" />
+            <Loader2 className="text-primary h-10 w-10 animate-spin" />
           </div>
         ) : !posts || posts.length === 0 ? (
-          <div className="text-center text-muted-foreground py-20">
-            <p>No travel posts yet. Be the first to tell your friends about your adventures!</p>
+          <div className="text-muted-foreground py-20 text-center">
+            <p>
+              No travel posts yet. Be the first to tell your friends about your
+              adventures!
+            </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-2">
@@ -56,7 +58,6 @@ export default function FriendsFeedPage() {
             ))}
           </div>
         )}
-
       </main>
     </div>
   );

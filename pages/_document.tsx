@@ -13,7 +13,10 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        <meta name="description" content="Wandr is an application used to plan vacations and explore new destinations, both alone and with friends." />
+        <meta
+          name="description"
+          content="Wandr is an application used to plan vacations and explore new destinations, both alone and with friends."
+        />
         <title>Wandr</title>
       </Head>
       <body className="antialiased">

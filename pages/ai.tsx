@@ -6,11 +6,27 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
-import { BookOpen, Landmark, Music, Utensils, Map, Trees, PlaneTakeoff, Loader2Icon, Save } from "lucide-react";
+import {
+  BookOpen,
+  Landmark,
+  Music,
+  Utensils,
+  Map,
+  Trees,
+  PlaneTakeoff,
+  Loader2Icon,
+  Save,
+} from "lucide-react";
 import { format } from "date-fns";
 import { DateRange } from "react-day-picker";
 import { DateRangePicker } from "@/components/dates";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { ParsedActivity, ParsedDay } from "@/server/api/routers/itineraries";
 import { createSupabaseServerClient } from "@/utils/supabase/clients/server-props";
@@ -31,7 +47,8 @@ export default function TravelPlannerPage() {
   const [isSaving, setIsSaving] = useState(false);
 
   const [filters, setFilters] = useState<string[]>([]);
-  const { data: destinations, isLoading: destinationsLoading } = api.destinations.getAll.useQuery();
+  const { data: destinations, isLoading: destinationsLoading } =
+    api.destinations.getAll.useQuery();
 
   const [destinationId, setDestinationId] = useState<string>("");
   const router = useRouter();
@@ -52,25 +69,28 @@ export default function TravelPlannerPage() {
 
   const toggleFilter = (f: string) => {
     setFilters((prev) =>
-      prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]
+      prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f],
     );
   };
 
   const buildPrompt = () => {
-    const dates = dateRange?.from && dateRange?.to
-      ? `\nTrip dates: ${format(dateRange.from, "MMM d, yyyy")} to ${format(dateRange.to, "MMM d, yyyy")}.`
-      : "";
+    const dates =
+      dateRange?.from && dateRange?.to
+        ? `\nTrip dates: ${format(dateRange.from, "MMM d, yyyy")} to ${format(dateRange.to, "MMM d, yyyy")}.`
+        : "";
 
-    const interests = filters.length > 0
-      ? `\nUser interests: ${filters.join(", ")}. Prioritize activities related to these interests.`
-      : "";
+    const interests =
+      filters.length > 0
+        ? `\nUser interests: ${filters.join(", ")}. Prioritize activities related to these interests.`
+        : "";
 
     const dest = destinations?.find((d) => d.id === destinationId);
     const city = dest?.name ?? "Your Destination";
 
-    const location = destinationId != ""
-      ? `\nDestination: ${city}. Prioritize activities related to these interests.`
-      : "";
+    const location =
+      destinationId != ""
+        ? `\nDestination: ${city}. Prioritize activities related to these interests.`
+        : "";
 
     return input + location + dates + interests;
   };
@@ -124,17 +144,18 @@ export default function TravelPlannerPage() {
   function convertTime(timeStr: string) {
     const date = new Date();
     return new Date(`${date.toDateString()} ${timeStr}`).toISOString();
-  };
+  }
 
   function parseItinerary(text: string): ParsedDay[] {
     const days: ParsedDay[] = [];
-    const lines = text.split("\n").map(l => l.trim());
+    const lines = text.split("\n").map((l) => l.trim());
 
     let currentDay: ParsedDay | null = null;
     let currentActivity: ParsedActivity | null = null;
 
     const dayRegex = /^Day\s+(\d+)(?:\s*\((.*?)\))?/i;
-    const activityLineRegex = /^(\d{1,2}:\d{2}(?:\s?(AM|PM))?)\s*[—–-]\s*(.+)$/i;
+    const activityLineRegex =
+      /^(\d{1,2}:\d{2}(?:\s?(AM|PM))?)\s*[—–-]\s*(.+)$/i;
     const categoryRegex = /^Category:\s*(.+)$/i;
     const locationRegex = /^Location:\s*(📍.+)$/i;
 
@@ -208,19 +229,19 @@ export default function TravelPlannerPage() {
     const days = parseItinerary(stream);
     setIsSaving(true);
 
-    let itineraryTitle = ""
+    let itineraryTitle = "";
 
     const dest = destinations?.find((d) => d.id === destinationId);
     const city = dest?.name ?? "Your Destination";
 
     if (!dateRange || !dateRange.from || !dateRange.to) {
-      itineraryTitle = `Trip to ${city}`
+      itineraryTitle = `Trip to ${city}`;
     } else {
       const numDays = getTripLength(dateRange.from, dateRange.to);
       if (numDays > 1) {
-        itineraryTitle = `${numDays} Days in ${city}`
+        itineraryTitle = `${numDays} Days in ${city}`;
       } else {
-        itineraryTitle = `1 Day in ${city}`
+        itineraryTitle = `1 Day in ${city}`;
       }
     }
 
@@ -236,17 +257,10 @@ export default function TravelPlannerPage() {
   };
 
   return (
-    <div className="min-h-screen horizon-bg">
+    <div className="horizon-bg min-h-screen">
       <main className="mx-auto w-full max-w-7xl px-6 py-12">
-
-        <div className="flex flex-col lg:flex-row gap-10 w-full items-start">
-
-          <div className="
-          w-full lg:w-[420px] shrink-0 flex flex-col gap-8 
-          bg-white/70 backdrop-blur-xl p-6 rounded-3xl 
-          border border-[#0A2A43]/10 shadow-lg
-        ">
-
+        <div className="flex w-full flex-col items-start gap-10 lg:flex-row">
+          <div className="flex w-full shrink-0 flex-col gap-8 rounded-3xl border border-[#0A2A43]/10 bg-white/70 p-6 shadow-lg backdrop-blur-xl lg:w-[420px]">
             <div className="flex items-center gap-3">
               <PlaneTakeoff className="h-8 w-8 text-[#ffb88c]" />
               <h1 className="text-3xl font-extrabold tracking-tight text-[#0A2A43]">
@@ -255,35 +269,37 @@ export default function TravelPlannerPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-[#0A2A43]">Trip Details</label>
+              <label className="text-sm font-semibold text-[#0A2A43]">
+                Trip Details
+              </label>
               <Textarea
                 placeholder="e.g. Backpacking Italy, love food + museums..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                className="
-                rounded-xl border border-[#0A2A43]/20 bg-white/60 
-                text-[#0A2A43] placeholder:text-[#0A2A43]/40 h-[90px] shadow-sm
-                dark:text-slate-100 dark:placeholder:text-slate-400
-              "
+                className="h-[90px] rounded-xl border border-[#0A2A43]/20 bg-white/60 text-[#0A2A43] shadow-sm placeholder:text-[#0A2A43]/40 dark:text-slate-100 dark:placeholder:text-slate-400"
               />
             </div>
 
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-semibold text-[#0A2A43]">Destination</label>
+              <label className="text-sm font-semibold text-[#0A2A43]">
+                Destination
+              </label>
 
               <Select
                 value={destinationId}
                 onValueChange={setDestinationId}
                 disabled={destinationsLoading}
               >
-                <SelectTrigger className="rounded-xl bg-white/60 border border-[#0A2A43]/20 shadow-sm">
+                <SelectTrigger className="rounded-xl border border-[#0A2A43]/20 bg-white/60 shadow-sm">
                   <SelectValue placeholder="Choose destination" />
                 </SelectTrigger>
 
                 <SelectContent>
                   {destinations?.map((dest) => (
                     <SelectItem value={dest.id} key={dest.id}>
-                      {dest.name ? `${dest.name}, ${dest.country}` : dest.country}
+                      {dest.name
+                        ? `${dest.name}, ${dest.country}`
+                        : dest.country}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -291,19 +307,26 @@ export default function TravelPlannerPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-[#0A2A43]">Trip Dates</label>
-              <DateRangePicker dateRange={dateRange} setDateRange={setDateRange} />
+              <label className="text-sm font-semibold text-[#0A2A43]">
+                Trip Dates
+              </label>
+              <DateRangePicker
+                dateRange={dateRange}
+                setDateRange={setDateRange}
+              />
               {dateRange?.from && dateRange?.to && (
-                <p className="text-xs text-[#0A2A43]/70 font-medium dark:text-slate-400">
-                  {format(dateRange.from, "MMM d, yyyy")} → {format(dateRange.to, "MMM d, yyyy")}
+                <p className="text-xs font-medium text-[#0A2A43]/70 dark:text-slate-400">
+                  {format(dateRange.from, "MMM d, yyyy")} →{" "}
+                  {format(dateRange.to, "MMM d, yyyy")}
                 </p>
               )}
             </div>
 
             <div className="flex flex-col gap-2">
-              <label className="text-sm font-semibold text-[#0A2A43]">Interests</label>
-              <div className="flex flex-wrap gap-2 bg-white/50 dark:bg-slate-900/80 rounded-xl p-3 border border-[#0A2A43]/10">
-
+              <label className="text-sm font-semibold text-[#0A2A43]">
+                Interests
+              </label>
+              <div className="flex flex-wrap gap-2 rounded-xl border border-[#0A2A43]/10 bg-white/50 p-3 dark:bg-slate-900/80">
                 {[
                   { key: "history", icon: <Landmark className="h-4 w-4" /> },
                   { key: "culture", icon: <BookOpen className="h-4 w-4" /> },
@@ -316,13 +339,11 @@ export default function TravelPlannerPage() {
                     key={key}
                     onClick={() => toggleFilter(key)}
                     variant={filters.includes(key) ? "default" : "outline"}
-                    className={`
-                    rounded-xl px-3 py-1 text-sm font-medium
-                    ${filters.includes(key)
-                        ? "bg-[#ffb88c] text-[#0A2A43] border-[#ffb88c]"
-                        : "text-[#0A2A43] border-[#0A2A43]/20"
-                      }
-                  `}
+                    className={`rounded-xl px-3 py-1 text-sm font-medium ${
+                      filters.includes(key)
+                        ? "border-[#ffb88c] bg-[#ffb88c] text-[#0A2A43]"
+                        : "border-[#0A2A43]/20 text-[#0A2A43]"
+                    } `}
                   >
                     {icon} <span className="ml-1 capitalize">{key}</span>
                   </Button>
@@ -332,31 +353,23 @@ export default function TravelPlannerPage() {
 
             <Button
               onClick={handleGenerate}
-              className="
-              mt-3 w-full px-6 py-4 rounded-xl text-lg font-bold shadow-md
-              bg-[#0A2A43] text-white hover:bg-[#0A2A43]/80 transition
-            "
+              className="mt-3 w-full rounded-xl bg-[#0A2A43] px-6 py-4 text-lg font-bold text-white shadow-md transition hover:bg-[#0A2A43]/80"
             >
               Generate Itinerary
             </Button>
           </div>
 
-          <div className="flex flex-col gap-6 flex-1">
-
+          <div className="flex flex-1 flex-col gap-6">
             <Card
               ref={scrollRef}
-              className="
-              w-full max-w-3xl mx-auto rounded-3xl p-6 shadow-xl 
-              border border-[#0A2A43]/10 bg-white/80 backdrop-blur-xl
-              h-[330px] sm:h-[380px] md:h-[510px] lg:h-[80vh] overflow-y-auto
-            "
+              className="mx-auto h-[330px] w-full max-w-3xl overflow-y-auto rounded-3xl border border-[#0A2A43]/10 bg-white/80 p-6 shadow-xl backdrop-blur-xl sm:h-[380px] md:h-[510px] lg:h-[80vh]"
             >
               {stream ? (
-                <pre className="whitespace-pre-wrap text-[15px] leading-relaxed text-[#0A2A43]">
+                <pre className="text-[15px] leading-relaxed whitespace-pre-wrap text-[#0A2A43]">
                   {stream}
                 </pre>
               ) : (
-                <p className="text-center text-[#0A2A43]/40 dark:text-slate-100 italic mt-12">
+                <p className="mt-12 text-center text-[#0A2A43]/40 italic dark:text-slate-100">
                   Your personalized itinerary will appear here...
                 </p>
               )}
@@ -365,14 +378,11 @@ export default function TravelPlannerPage() {
             <Button
               disabled={isSaving || !stream}
               onClick={handleSaveItinerary}
-              className="
-              self-center w-fit px-6 py-4 rounded-xl text-lg font-bold
-              bg-[#ffb88c] text-[#0A2A43] hover:bg-[#ff9f63] shadow-md transition
-            "
+              className="w-fit self-center rounded-xl bg-[#ffb88c] px-6 py-4 text-lg font-bold text-[#0A2A43] shadow-md transition hover:bg-[#ff9f63]"
             >
               {isSaving ? (
                 <>
-                  <Loader2Icon className="animate-spin mr-2" /> Saving...
+                  <Loader2Icon className="mr-2 animate-spin" /> Saving...
                 </>
               ) : (
                 <>
