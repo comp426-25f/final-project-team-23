@@ -91,7 +91,7 @@ export default function CreatePostPage({ user }: Props) {
   };
 
   return (
-    <div className="flex justify-center px-4 py-10">
+    <div className="flex justify-center px-4 py-10 horizon-bg min-h-screen">
       <div className="w-full max-w-xl">
 
         <Button variant="ghost" className="mb-4" onClick={() => router.back()}>
@@ -99,7 +99,6 @@ export default function CreatePostPage({ user }: Props) {
         </Button>
 
         <Card className="
-          bg-[#faf7f2]
           border-[3px] border-[#0A2A43]/20
           rounded-2xl shadow-xl p-6 relative 
           animate-fadeIn
