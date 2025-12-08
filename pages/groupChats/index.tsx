@@ -8,7 +8,12 @@ import { api } from "@/utils/trpc/api";
 import { useAuth } from "@/utils/use-auth";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Loader2, Plus, ArrowLeft } from "lucide-react";
 import { createSupabaseServerClient } from "@/utils/supabase/clients/server-props";
@@ -65,147 +70,168 @@ export default function GroupChatsIndexPage() {
 
   if (authLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin" />
+      <div className="min-h-screen relative horizon-bg">
+        <main className="mx-auto flex max-w-6xl items-center justify-center px-6 py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen relative horizon-bg">
-      <main className="mx-auto flex max-w-3xl flex-col gap-4 p-4 md:p-8">
-        <div className="flex items-center justify-between">
-          <Button variant="ghost" onClick={() => router.push("/")}>
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back
+  <div className="min-h-screen relative horizon-bg">
+    <main className="mx-auto w-full max-w-6xl px-6 py-12 flex flex-col gap-8">
+
+      <Card className="bg-white/80 border border-white/40 rounded-2xl shadow-xl backdrop-blur-sm">
+        <CardHeader className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4">
+          <Button
+            variant="ghost"
+            className="px-0 hover:bg-transparent text-muted-foreground hover:text-[#0A2A43]"
+            onClick={() => router.push("/friends")}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Friends
           </Button>
-          <h1 className="text-2xl font-bold">Group Chats</h1>
-          <Button variant="default" onClick={() => setIsCreating((v) => !v)}>
+
+          <div>
+            <CardTitle className="text-3xl md:text-4xl font-black text-[#0A2A43] tracking-tight">
+              Group Chats
+            </CardTitle>
+            <p className="mt-2 text-sm md:text-base text-gray-600 max-w-xl">
+              Start a new group or jump back into conversations with your travel crew.
+            </p>
+          </div>
+
+          <Button
+            variant="default"
+            className="h-auto px-5 py-3 rounded-xl bg-[#0A2A43] text-white font-semibold shadow-md hover:bg-[#061829] transition"
+            onClick={() => setIsCreating((v) => !v)}
+          >
             <Plus className="mr-2 h-4 w-4" />
             New Chat
           </Button>
-        </div>
+        </CardHeader>
+      </Card>
 
-        {/* New group chat form */}
-        {isCreating && (
-          <Card>
-            <CardContent className="space-y-4 py-4">
-              <form onSubmit={handleCreate} className="space-y-4">
-                <div>
-                  <label className="mb-1 block text-sm font-medium">
-                    Group chat name
-                  </label>
-                  <Input
-                    value={chatName}
-                    onChange={(e) => setChatName(e.target.value)}
-                    placeholder="Trip planning, game night, etc."
-                  />
-                </div>
+      {isCreating && (
+        <Card className="bg-white/80 border border-white/40 rounded-2xl shadow-md backdrop-blur-sm">
+          <CardContent className="space-y-4 py-4">
+            <form onSubmit={handleCreate} className="space-y-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Group chat name
+                </label>
+                <Input
+                  value={chatName}
+                  onChange={(e) => setChatName(e.target.value)}
+                  placeholder="Trip planning, game night, etc."
+                />
+              </div>
 
-                <div>
-                  <label className="mb-1 block text-sm font-medium">
-                    Add friends
-                  </label>
-                  {friendsLoading ? (
-                    <p className="text-sm text-muted-foreground">
-                      Loading friends...
-                    </p>
-                  ) : !friends || friends.length === 0 ? (
-                    <p className="text-sm text-muted-foreground">
-                      You aren&apos;t following anyone yet.
-                    </p>
-                  ) : (
-                    <div className="max-h-48 space-y-1 overflow-y-auto rounded-md border p-2">
-                      {friends.map((friend) => (
-                        <label
-                          key={friend.id}
-                          className="flex cursor-pointer items-center gap-2 text-sm"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={selectedMemberIds.includes(friend.id)}
-                            onChange={() => toggleMember(friend.id)}
-                          />
-                          <span className="font-medium">
-                            {friend.displayName}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            @{friend.username}
-                          </span>
-                        </label>
-                      ))}
-                    </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium">
+                  Add friends
+                </label>
+                {friendsLoading ? (
+                  <p className="text-sm text-muted-foreground">
+                    Loading friends...
+                  </p>
+                ) : !friends || friends.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">
+                    You aren&apos;t following anyone yet.
+                  </p>
+                ) : (
+                  <div className="max-h-48 space-y-1 overflow-y-auto rounded-md border p-2">
+                    {friends.map((friend) => (
+                      <label
+                        key={friend.id}
+                        className="flex cursor-pointer items-center gap-2 text-sm"
+                      >
+                        <input
+                          type="checkbox"
+                          checked={selectedMemberIds.includes(friend.id)}
+                          onChange={() => toggleMember(friend.id)}
+                        />
+                        <span className="font-medium">
+                          {friend.displayName}
+                        </span>
+                        <span className="text-xs text-muted-foreground">
+                          @{friend.username}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="flex justify-end gap-2">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  onClick={() => {
+                    setIsCreating(false);
+                    setChatName("");
+                    setSelectedMemberIds([]);
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  type="submit"
+                  disabled={creatingChat || !chatName.trim()}
+                >
+                  {creatingChat && (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   )}
-                </div>
-
-                <div className="flex justify-end gap-2">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    onClick={() => {
-                      setIsCreating(false);
-                      setChatName("");
-                      setSelectedMemberIds([]);
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={creatingChat || !chatName.trim()}
-                  >
-                    {creatingChat && (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    )}
-                    Create
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-        )}
-
-        <Card>
-          <CardContent className="space-y-3 py-4">
-            <h2 className="text-lg font-semibold">Your group chats</h2>
-            {chatsLoading ? (
-              <div className="flex items-center justify-center py-6">
-                <Loader2 className="h-6 w-6 animate-spin" />
+                  Create
+                </Button>
               </div>
-            ) : !groupChats || groupChats.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
-                You&apos;re not in any group chats yet. Create one above!
-              </p>
-            ) : (
-              <div className="space-y-2">
-                {groupChats.map((chat) => (
-                  <Link
-                    key={chat.id}
-                    href={`/groupChats/${chat.id}`}
-                    className="block"
-                  >
-                    <div className="flex items-center justify-between rounded-md border px-3 py-2 hover:bg-muted/60">
-                      <span className="font-medium">{chat.name}</span>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            )}
+            </form>
           </CardContent>
         </Card>
-      </main>
-    </div>
-  );
+      )}
+
+      <Card className="bg-white/80 border border-white/40 rounded-2xl shadow-md backdrop-blur-sm">
+        <CardContent className="space-y-3 py-4">
+          <h2 className="text-lg font-semibold text-[#0A2A43]">
+            Your group chats
+          </h2>
+          {chatsLoading ? (
+            <div className="flex items-center justify-center py-6">
+              <Loader2 className="h-6 w-6 animate-spin" />
+            </div>
+          ) : !groupChats || groupChats.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              You&apos;re not in any group chats yet. Create one above!
+            </p>
+          ) : (
+            <div className="space-y-2">
+              {groupChats.map((chat) => (
+                <Link
+                  key={chat.id}
+                  href={`/groupChats/${chat.id}`}
+                  className="block"
+                >
+                  <div className="flex items-center justify-between rounded-xl border border-slate-200 px-3 py-2 bg-white/70 hover:bg-[#0A2A43]/5 transition">
+                    <span className="font-medium text-[#0A2A43]">
+                      {chat.name}
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </main>
+  </div>
+);
 }
 
 export async function getServerSideProps(context: GetServerSidePropsContext) {
-  // Create the supabase context that works specifically on the server and
-  // pass in the context.
   const supabase = createSupabaseServerClient(context);
-
-  // Attempt to load the user data
   const { data: userData, error: userError } = await supabase.auth.getClaims();
 
-  // If the user is not logged in, redirect them to the login page.
   if (userError || !userData) {
     return {
       redirect: {
@@ -219,6 +245,5 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     props: {
       user: { id: userData.claims.sub },
     },
-};
+  };
 }
-
