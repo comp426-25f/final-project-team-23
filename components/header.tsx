@@ -19,11 +19,7 @@ export default function Header() {
   const apiUtils = api.useUtils();
   const { theme, setTheme } = useTheme();
 
-  const { data: profile, isLoading } = api.profiles.getAuthedUserProfile.useQuery();
-
-  if (isLoading) return null;
-  if (!profile) return null;
-
+  const { data: profile } = api.profiles.getAuthedUserProfile.useQuery();
 
   return (
     <header className="w-full border-b bg-white/70 backdrop-blur-md">
@@ -62,7 +58,7 @@ export default function Header() {
             </NavigationMenuItem>
 
             <NavigationMenuItem>
-              <Link href="/groups" className="text-md font-medium hover:text-primary">
+              <Link href="/groupChats" className="text-md font-medium hover:text-primary">
                 Connect
               </Link>
             </NavigationMenuItem>
@@ -110,7 +106,8 @@ export default function Header() {
               onClick={async () => {
                 await supabase.auth.signOut();
                 apiUtils.profiles.getAuthedUserProfile.invalidate();
-                router.push("/");
+                await apiUtils.invalidate();
+                router.push("/login");
               }}
             >
               <LogOut /> Sign Out

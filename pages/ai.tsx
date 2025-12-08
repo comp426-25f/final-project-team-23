@@ -13,6 +13,8 @@ import { DateRangePicker } from "@/components/dates";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { ParsedActivity, ParsedDay } from "@/server/api/routers/itineraries";
+import { createSupabaseServerClient } from "@/utils/supabase/clients/server-props";
+import { GetServerSidePropsContext } from "next";
 
 export default function TravelPlannerPage() {
   const [input, setInput] = useState("");
@@ -381,4 +383,27 @@ const handleSaveItinerary = () => {
     </main>
   </div>
 );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  // Create the supabase context that works specifically on the server and
+  // pass in the context.
+  const supabase = createSupabaseServerClient(context);
+
+  // Attempt to load the user data
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+
+  // If the user is not logged in, redirect them to the login page.
+  if (userError || !userData) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 }

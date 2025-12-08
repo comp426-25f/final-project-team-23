@@ -12,6 +12,8 @@ import { useAuth } from "@/utils/use-auth";
 import PostCard from "@/components/post";
 import ItineraryPreviewCard from "@/components/itinerary";
 import { Subject } from "@/server/models/auth";
+import { createSupabaseServerClient } from "@/utils/supabase/clients/server-props";
+import { GetServerSidePropsContext } from "next";
 
 export default function ExplorePage() {
   const { user, isLoading: authLoading } = useAuth();
@@ -148,4 +150,27 @@ export default function ExplorePage() {
       </main>
     </div>
   );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  // Create the supabase context that works specifically on the server and
+  // pass in the context.
+  const supabase = createSupabaseServerClient(context);
+
+  // Attempt to load the user data
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+
+  // If the user is not logged in, redirect them to the login page.
+  if (userError || !userData) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 }

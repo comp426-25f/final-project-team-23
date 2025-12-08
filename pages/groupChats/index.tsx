@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Loader2, Plus, ArrowLeft } from "lucide-react";
+import { createSupabaseServerClient } from "@/utils/supabase/clients/server-props";
+import { GetServerSidePropsContext } from "next";
 
 export default function GroupChatsIndexPage() {
   const router = useRouter();
@@ -203,4 +205,27 @@ export default function GroupChatsIndexPage() {
       </main>
     </div>
   );
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  // Create the supabase context that works specifically on the server and
+  // pass in the context.
+  const supabase = createSupabaseServerClient(context);
+
+  // Attempt to load the user data
+  const { data: userData, error: userError } = await supabase.auth.getUser();
+
+  // If the user is not logged in, redirect them to the login page.
+  if (userError || !userData) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    };
+  }
+
+  return {
+    props: {},
+  };
 }
