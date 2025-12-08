@@ -48,7 +48,7 @@ export default function ItineraryPage() {
     const [openJoin, setOpenJoin] = useState(false);
     return (
         <div className="min-h-screen relative horizon-bg">
-           <main className="mx-auto w-full max-w-6xl px-6 py-12 flex gap-6">
+            <main className="mx-auto w-full px-6 py-12 ">
                 <div className="flex">
                     <Card className="self-start w-64 min-h-screen">
                         <CardHeader className="font-semibold self-center w-full">Your Trips</CardHeader>
@@ -508,6 +508,17 @@ function GetDays({ itineraryId, onTripDeleted }: { itineraryId: string, onTripDe
         type PresenceEntry = { id?: string; userId?: string };
         const ch = supabase
             .channel("presence", { config: { presence: { key: user?.id } } })
+            // Sync state
+            .on("presence", { event: "sync" }, () => {
+                // I need the full presence state after a join/leave for sync
+                const state = ch.presenceState() as Record<string, PresenceEntry[]>;
+                const ids = Object.values(state)
+                    .flat()
+                    .map((p) => p.userId)
+                    .filter(Boolean) as string[];
+
+                setOnlineUsers(Array.from(new Set(ids)))
+            },)
             .on("presence", { event: "join" }, (payload: { newPresences?: PresenceEntry[] }) => {
                 const { newPresences } = payload;
                 const ids = (newPresences ?? []).map((p: PresenceEntry) => p.userId ?? p.id);
@@ -623,7 +634,7 @@ function GetDays({ itineraryId, onTripDeleted }: { itineraryId: string, onTripDe
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
-                <p className="pt-4 text-muted-foreground text-lg">
+                <p className="pt-4 text-muted-foreground font-bold text-lg">
                     {itinerary?.startDate &&
                         format(
                             new Date(itinerary.startDate.getTime() + itinerary.startDate.getTimezoneOffset() * 60000),
@@ -638,7 +649,7 @@ function GetDays({ itineraryId, onTripDeleted }: { itineraryId: string, onTripDe
                         )
                     }
                 </p>
-                <p className="pt-4 text-lg text-muted-foreground">{itinerary?.description}</p>
+                <p className="pt-4 text-lg font-medium text-muted-foreground">{itinerary?.description}</p>
             </div>
             <div>
                 <Card className="mb-4 w-[600px]">
@@ -810,6 +821,7 @@ function GetDays({ itineraryId, onTripDeleted }: { itineraryId: string, onTripDe
                                             <Ellipsis className="w-5 h-5 cursor-pointer" />
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
+                                            <DropdownMenuLabel className="self-center">Day Changes</DropdownMenuLabel>
                                             <DropdownMenuItem
                                                 onClick={() => {
                                                     setEditingDayId(day.id);
@@ -937,7 +949,7 @@ function GetDays({ itineraryId, onTripDeleted }: { itineraryId: string, onTripDe
                 </Dialog>
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button variant="outline" className="w-[600px]">
+                        <Button className="w-[600px] bg-black text-white">
                             Add Day
                             <PlusCircle className="ml-1" />
                         </Button>
@@ -1178,7 +1190,7 @@ function GetActivities({ dayId }: { dayId: string }) {
                         <CardHeader className="-my-1">
                             <div className="flex justify-between -mb-1 items-center">
                                 <div className="flex flex-row">
-                                    <p className="text-sm font-medium text-gray-600 mr-4">
+                                    <p className="text-sm font-bold text-gray-600 mr-4">
                                         {activity.time
                                             ? new Date(activity.time).toLocaleTimeString("en-US", {
                                                 hour: "2-digit",
@@ -1195,6 +1207,7 @@ function GetActivities({ dayId }: { dayId: string }) {
                                         <Ellipsis className="w-5 h-5 cursor-pointer" />
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
+                                        <DropdownMenuLabel>Activity Changes</DropdownMenuLabel>
                                         <DropdownMenuItem
                                             onClick={() => {
                                                 setEditingActivityId(activity.id);
