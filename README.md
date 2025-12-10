@@ -12,14 +12,30 @@
 ![Drizzle](https://img.shields.io/badge/-Drizzle-05122A?style=flat&logo=drizzle)
 ![tRPC](https://img.shields.io/badge/-tRPC-05122A?style=flat&logo=trpc)
 
-_Add some screenshots or graphics here that show your app being used!_
+<img width="1134" height="673" alt="Screenshot 2025-12-09 at 7 19 21 PM" src="https://github.com/user-attachments/assets/7c1f2350-fe22-48cb-a9b1-ccebabe82181" /><img width="1372" height="665" alt="Screenshot 2025-12-09 at 7 25 50 PM" src="https://github.com/user-attachments/assets/327092c1-06a8-4a6a-a969-bb170d7864d2" /><img width="1280" height="650" alt="Screenshot 2025-12-09 at 7 26 27 PM" src="https://github.com/user-attachments/assets/690585fd-0b88-4070-87a7-205ca7f39609" />
 
 Wandr is a social platform for travelers who want more out of their adventures. Connect with people exploring the world, share your journeys, and discover itineraries created by real travelers. Whether you’re planning your next getaway or documenting your past adventures, Wandr brings inspiration, community, and effortless group trip planning together in one place.
 
 ## Features
 
-_Describe the features of your app here._
+<b>AI Trip Planner</b>
+
+<p>Users can navigate to a screen where they can input any prompt about a location they want to go to, how many days they are planning on staying, and information about what they would be interested in doing/what kind of traveler they are. The AI feature will output daily itinerary ideas in response, as well as ideas for places to stay and places to eat if the user requests it.</p>
+
+<b>Collaborative Itinerary Editing</b>
+
+<p>Users can collaborate with friends to build travel itineraries using AI to supplement their ideas. Each edit made by each user to the itinerary will be updated in real time for all users to see changes (like Google Docs).</p>
+
+<b>Following Feed + Explore Travel Feed</b>
+
+<p>Users can navigate to an infinite scrolling feed where they can browse either trending/recommended trips and itineraries posted by others, or they can navigate to the friends feed where they can see what trips their friends have been on lately.</p>
+
+<b>Post Travel Journals + Photo Galleries for Each Trip</b>
+
+<p>Users can make posts containing their travel itineraries, any images taken from their trip, and any reflections or comments about their time spent. These posts will appear on their profile and in their friends’ feed.</p>
+
+<b>Travel Buddy Chats</b>
+
+<p>Users can create chats with friends to collaborate and talk about their trips and experiences.</p>
 
 ## ...
-
-Feel free to add other sections as you see fit!
