@@ -14,7 +14,7 @@
 
 _Add some screenshots or graphics here that show your app being used!_
 
-_Include a short description of your app here._
+Wandr is a social platform for travelers who want more out of their adventures. Connect with people exploring the world, share your journeys, and discover itineraries created by real travelers. Whether you’re planning your next getaway or documenting your past adventures, Wandr brings inspiration, community, and effortless group trip planning together in one place.
 
 ## Features
 
