@@ -12,7 +12,14 @@
 ![Drizzle](https://img.shields.io/badge/-Drizzle-05122A?style=flat&logo=drizzle)
 ![tRPC](https://img.shields.io/badge/-tRPC-05122A?style=flat&logo=trpc)
 
-<img width="1134" height="673" alt="Screenshot 2025-12-09 at 7 19 21 PM" src="https://github.com/user-attachments/assets/7c1f2350-fe22-48cb-a9b1-ccebabe82181" /><img width="1372" height="665" alt="Screenshot 2025-12-09 at 7 25 50 PM" src="https://github.com/user-attachments/assets/327092c1-06a8-4a6a-a969-bb170d7864d2" /><img width="1280" height="650" alt="Screenshot 2025-12-09 at 7 26 27 PM" src="https://github.com/user-attachments/assets/690585fd-0b88-4070-87a7-205ca7f39609" />
+<b>Explore Travel Feed</b>
+<img width="1034" height="573" alt="Screenshot 2025-12-09 at 7 19 21 PM" src="https://github.com/user-attachments/assets/7c1f2350-fe22-48cb-a9b1-ccebabe82181" />
+
+<b>AI Trip Planner</b>
+<img width="1272" height="565" alt="Screenshot 2025-12-09 at 7 25 50 PM" src="https://github.com/user-attachments/assets/327092c1-06a8-4a6a-a969-bb170d7864d2" />
+
+<b>Travel Buddy Chats</b>
+<img width="1180" height="550" alt="Screenshot 2025-12-09 at 7 26 27 PM" src="https://github.com/user-attachments/assets/690585fd-0b88-4070-87a7-205ca7f39609" />
 
 Wandr is a social platform for travelers who want more out of their adventures. Connect with people exploring the world, share your journeys, and discover itineraries created by real travelers. Whether you’re planning your next getaway or documenting your past adventures, Wandr brings inspiration, community, and effortless group trip planning together in one place.
 
