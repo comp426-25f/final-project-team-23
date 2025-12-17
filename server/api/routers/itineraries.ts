@@ -153,6 +153,11 @@ ${request}
             message: "Failed to create itinerary.",
           });
 
+        await db.insert(itineraryCollaboratorsTable).values({
+          itineraryId: itinerary.id,
+          profileId: subject.id,
+        });
+
         const dayRows = days.map((d) => ({
           itineraryId: itinerary.id,
           dayNumber: d.dayNumber,
